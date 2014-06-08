@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Very Basic Physics Interaction From Blender 3D</title>
+    <title>Manuel Physics Interaction From Blender 3D</title>
     <script src="../babylon.js"></script>
     <script src="../cannon.js"></script>
     <style>
@@ -24,13 +24,11 @@
 
 <script>
 
-var Scene, Camera, canvas, engine;
-
     if (BABYLON.Engine.isSupported()) {
         canvas = document.getElementById("renderCanvas");
         engine = new BABYLON.Engine(canvas, true);
 
-        BABYLON.SceneLoader.Load("", "crates_1.babylon", engine, function (newScene) {
+        BABYLON.SceneLoader.Load("", "crates_2.babylon", engine, function (newScene) {
             Scene = newScene;
             // Wait for textures and shaders to be ready
             newScene.executeWhenReady(function () {
@@ -39,7 +37,22 @@ var Scene, Camera, canvas, engine;
                 Camera2 = new BABYLON.ArcRotateCamera("ArcRotateCamera", -2, 0.8, 20, new BABYLON.Vector3(0, 5, 0), Scene);
                 Scene.activeCamera = Camera2;
                 newScene.activeCamera.attachControl(canvas);
-       
+
+                Scene.enablePhysics();
+                Scene.setGravity(new BABYLON.Vector3(0, -10, 0)); 
+
+                Ground = new Load_Ground(Scene.getMeshByName("Plane"));             
+                Crate = [];
+
+                for(var i = 0;i<Scene.meshes.length;i++){
+                    var obj = Scene.meshes[i];
+                    var name = obj.name.split(".");
+                    var type = name[0];
+                    if(type == "Cube"){
+                        Crate.push(new Load_Crate(obj));
+                    }
+                }      
+
                 // Once the scene is loaded, just register a render loop to render it
                 engine.runRenderLoop(function() {
                     newScene.render();
@@ -49,6 +62,17 @@ var Scene, Camera, canvas, engine;
             // To do: give progress feedback to user
         });
     }
+
+
+var Load_Ground = function(obj){
+    this.mesh = obj;
+    this.mesh.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 0, friction: 0.5, restitution: 0.7 }); 
+}
+
+var Load_Crate = function(obj){
+    this.mesh = obj;
+    this.mesh.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 1, friction: 0.5, restitution: 0.7 }); 
+}
 
 //Move Crates when clicked
 canvas.addEventListener("mousedown", function (evt) {
