@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>BABYLON.JS Basic Physics Scene</title>
+
+    <script src="../babylon.js"></script>
+    <script src="../cannon.js"></script>
+
+    <style type="text/css">
+        html,body,#canvas {
+            width:100%;
+            height:100%;
+            padding:0;
+            margin:0;
+            overflow: hidden;
+        }
+        #buttons{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="buttons">
+      <div id="ball_controls">
+        <button id="button_up" onclick="Ball_Move(0,20,0)">UP</button>
+        <button id="button_left" onclick="Ball_Move(-1,0,0)">LEFT</button>
+        <button id="button_right" onclick="Ball_Move(1,0,0)">RIGHT</button>
+        <button id="button_forward" onclick="Ball_Move(0,0,1)">Forward</button>
+        <button id="button_back" onclick="Ball_Move(0,0,-1)">Back</button>
+      <div>
+
+      <div id="box_controls">
+        <button id="button_up" onclick="Box_Move(0,1,0)">UP</button>
+        <button id="button_left" onclick="Box_Move(-.5,0,0)">LEFT</button>
+        <button id="button_right" onclick="Box_Move(.5,0,0)">RIGHT</button>
+        <button id="button_forward" onclick="Box_Move(0,0,.5)">Forward</button>
+        <button id="button_back" onclick="Box_Move(0,0,-.5)">Back</button>
+      <div>
+
+    </div>
+<script>
+
+var scene, camera, light0, ball, plane;
+window.onload = function(){
+    var canvas = document.getElementById("canvas");
+
+    // Check support
+    if (!BABYLON.Engine.isSupported()) {
+        window.alert('Browser not supported');
+    } else {
+        // Babylon
+        var engine = new BABYLON.Engine(canvas, true);
+
+        scene = new BABYLON.Scene(engine);
+        scene.enablePhysics();
+        scene.setGravity(new BABYLON.Vector3(0, -10, 0));
+        // Creating a camera looking to the zero point (0,0,0), a light, and a sphere of size 1
+        //camera = new BABYLON.FreeCamera("Camera", 1, 0.8, 10, scene);
+        camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(-10, -10, -15), scene);
+
+        light0 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(0, 0, -20), scene);
+
+        ball = BABYLON.Mesh.CreateSphere("Ball", 10, 5.0, scene);
+        ball.position.y = 5;
+        ball.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 1 });
+        camera.lockedTarget = ball;
+
+        box = BABYLON.Mesh.CreateBox("Box", 3, scene);
+        box.position.x = 5;
+        box.position.z = 5;
+        box.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 1, friction: 0.5, restitution: 0.7 });
+
+        plane = BABYLON.Mesh.CreatePlane("Plane", 200.0, scene);
+        plane.position.y = -30;
+        plane.rotate(BABYLON.Axis.X, Math.PI/2, BABYLON.Space.LOCAL);
+        plane.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 0, friction: 0.5, restitution: 0.7 });
+
+        // Attach the camera to the scene
+        scene.activeCamera.attachControl(canvas);
+
+        // Once the scene is loaded, just register a render loop to render it
+        engine.runRenderLoop(function () {
+            scene.render();
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    } 
+};
+
+function Ball_Move(x,y,z){
+    camera.lockedTarget = ball;
+    ball.applyImpulse(new BABYLON.Vector3(x, y, z),new BABYLON.Vector3(0,0,0));
+    //applyImpulse(force, contactPoint)
+}
+
+function Box_Move(x,y,z){
+    camera.lockedTarget = box;
+    box.applyImpulse(new BABYLON.Vector3(x, y, z),new BABYLON.Vector3(0,0,0));
+}
+
+</script>
+</body>
+</html>
