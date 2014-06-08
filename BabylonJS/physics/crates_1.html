@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Very Basic Physics Interaction From Blender 3D</title>
+    <script src="../babylon.js"></script>
+    <script src="../cannon.js"></script>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+
+<script>
+
+var Scene, Camera, canvas, engine;
+
+    if (BABYLON.Engine.isSupported()) {
+        canvas = document.getElementById("renderCanvas");
+        engine = new BABYLON.Engine(canvas, true);
+
+        BABYLON.SceneLoader.Load("", "crates_1.babylon", engine, function (newScene) {
+            Scene = newScene;
+            // Wait for textures and shaders to be ready
+            newScene.executeWhenReady(function () {
+                // Attach camera to canvas inputs
+                //Camera = Scene.activeCamera;
+                Camera2 = new BABYLON.ArcRotateCamera("ArcRotateCamera", -2, 0.8, 20, new BABYLON.Vector3(0, 5, 0), Scene);
+                Scene.activeCamera = Camera2;
+                newScene.activeCamera.attachControl(canvas);
+       
+                Scene.enablePhysics();
+                Scene.setGravity(new BABYLON.Vector3(0, -10, 0)); 
+                // Once the scene is loaded, just register a render loop to render it
+                engine.runRenderLoop(function() {
+                    newScene.render();
+                });
+            });
+        }, function (progress) {
+            // To do: give progress feedback to user
+        });
+    }
+
+//Move Crates when clicked
+canvas.addEventListener("mousedown", function (evt) {
+    var pickResult = Scene.pick(evt.clientX, evt.clientY);
+    if (pickResult.hit) {
+        var dir = pickResult.pickedPoint.subtract(Scene.activeCamera.position);
+        dir.normalize();
+        pickResult.pickedMesh.applyImpulse(dir.scale(15), pickResult.pickedPoint);
+    }
+});
+</script>
+ </body>
+</html>
