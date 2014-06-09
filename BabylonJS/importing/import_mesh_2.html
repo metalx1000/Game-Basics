@@ -32,19 +32,17 @@ window.onload = function(){
         var engine = new BABYLON.Engine(canvas, true);
 
         Scene = new BABYLON.Scene(engine);
-        Scene.enablePhysics();
-        Scene.setGravity(new BABYLON.Vector3(0, 10, 0));
 
-        Camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", -2, 0.8, 20, new BABYLON.Vector3(0, 5, 0), Scene);
+        Camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 5, 0.8, 20, new BABYLON.Vector3(-5, 2, 0), Scene);
         Scene.activeCamera = Camera;
 
         Scene.enablePhysics();
-        Scene.setGravity(new BABYLON.Vector3(0, -10, 0)); 
+        Scene.setGravity(new BABYLON.Vector3(0, -1, 0)); 
 
         light0 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(0, 0, -20), Scene);
 
 
-        plane = BABYLON.Mesh.CreatePlane("Plane", 200.0, Scene);
+        plane = BABYLON.Mesh.CreatePlane("Plane", 100.0, Scene);
         plane.position.y = -30;
         plane.rotate(BABYLON.Axis.X, Math.PI/2, BABYLON.Space.LOCAL);
         plane.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 0, friction: 0.5, restitution: 0.7 });
@@ -53,15 +51,21 @@ window.onload = function(){
         var timer = setInterval(function(){
             BABYLON.SceneLoader.ImportMesh("Monkey", "", "monkey.babylon", Scene, function (newMeshes, particleSystems) {
                 newMeshes[0].position.x = -10
-                Camera.lockedTarget = newMeshes[0];
                 newMeshes[0].setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 1, friction: 0.5, restitution: 0.7 });
+                newMeshes[0].applyImpulse(new BABYLON.Vector3(.2, 0, .2),new BABYLON.Vector3(0,0,0));
             });        
         },1000);
 
         //load Conehead Monkey Model
         BABYLON.SceneLoader.ImportMesh("Conehead", "", "monkey.babylon", Scene, function (newMeshes, particleSystems) {
             newMeshes[0].position.x = 10;
-});        
+        });        
+
+        box = BABYLON.Mesh.CreateBox("Box", 3, Scene);
+        box.position.x = 5;
+        box.position.z = 5;
+        box.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 1, friction: 0.5, restitution: 0.7 });
+
 
         // Attach the camera to the scene
         Scene.activeCamera.attachControl(canvas);
@@ -78,6 +82,15 @@ window.onload = function(){
     } 
 };
 
+//Move Physics Eneabled Meshes when clicked
+canvas.addEventListener("mousedown", function (evt) {
+    var pickResult = Scene.pick(evt.clientX, evt.clientY);
+    if (pickResult.hit) {
+        var dir = pickResult.pickedPoint.subtract(Scene.activeCamera.position);
+        dir.normalize();
+        pickResult.pickedMesh.applyImpulse(dir.scale(15), pickResult.pickedPoint);
+    }
+});
 
 </script>
 </body>
