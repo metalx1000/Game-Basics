@@ -33,7 +33,7 @@ window.onload = function(){
 
         Scene = new BABYLON.Scene(engine);
 
-        Camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 5, 0.8, 20, new BABYLON.Vector3(-5, 2, 0), Scene);
+        Camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 10, 1, 50, new BABYLON.Vector3(0, -20, 0), Scene);
         Scene.activeCamera = Camera;
 
         Scene.enablePhysics();
