@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>BABYLON.JS Basic model constant import</title>
+
+    <script src="../babylon.js"></script>
+    <script src="../cannon.js"></script>
+
+    <style type="text/css">
+        html,body,#canvas {
+            width:100%;
+            height:100%;
+            padding:0;
+            margin:0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+<script>
+
+var Scene, Camera, light0;
+window.onload = function(){
+    var canvas = document.getElementById("canvas");
+
+    // Check support
+    if (!BABYLON.Engine.isSupported()) {
+        window.alert('Browser not supported');
+    } else {
+        // Babylon
+        var engine = new BABYLON.Engine(canvas, true);
+
+        Scene = new BABYLON.Scene(engine);
+        Scene.enablePhysics();
+        Scene.setGravity(new BABYLON.Vector3(0, 10, 0));
+
+        Camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", -2, 0.8, 20, new BABYLON.Vector3(0, 5, 0), Scene);
+        Scene.activeCamera = Camera;
+
+        Scene.enablePhysics();
+        Scene.setGravity(new BABYLON.Vector3(0, -10, 0)); 
+
+        light0 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(0, 0, -20), Scene);
+
+
+        plane = BABYLON.Mesh.CreatePlane("Plane", 200.0, Scene);
+        plane.position.y = -30;
+        plane.rotate(BABYLON.Axis.X, Math.PI/2, BABYLON.Space.LOCAL);
+        plane.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 0, friction: 0.5, restitution: 0.7 });
+
+        //load Monkey Model
+        var timer = setInterval(function(){
+            BABYLON.SceneLoader.ImportMesh("Monkey", "", "monkey.babylon", Scene, function (newMeshes, particleSystems) {
+                newMeshes[0].position.x = -10
+                Camera.lockedTarget = newMeshes[0];
+                newMeshes[0].setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 1, friction: 0.5, restitution: 0.7 });
+            });        
+        },1000);
+
+        //load Conehead Monkey Model
+        BABYLON.SceneLoader.ImportMesh("Conehead", "", "monkey.babylon", Scene, function (newMeshes, particleSystems) {
+            newMeshes[0].position.x = 10;
+});        
+
+        // Attach the camera to the scene
+        Scene.activeCamera.attachControl(canvas);
+
+        // Once the scene is loaded, just register a render loop to render it
+        engine.runRenderLoop(function () {
+            Scene.render();
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    } 
+};
+
+
+</script>
+</body>
+</html>
