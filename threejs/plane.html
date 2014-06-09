@@ -1,0 +1,22 @@
+<html>
+    <body>
+       <script src="three.min.js"></script>
+        <script>
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.y = -400;
+            camera.position.z = 400;
+            camera.rotation.x = .70;
+
+            var scene = new THREE.Scene();
+
+            var plane = new THREE.Mesh(new THREE.PlaneGeometry(300,300), new THREE.MeshNormalMaterial());
+            scene.add(plane);
+
+            renderer.render(scene, camera);
+        </script>
+    </body>
+</html>

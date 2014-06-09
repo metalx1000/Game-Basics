@@ -1,0 +1,38 @@
+<html>
+    <head>
+
+    </head>
+    <body>
+        <div id="target" style="position:absolute; width: 200px; height: 200px; background: #a0dde9; padding: 1em;">
+            www.FilmsByKris.com
+        </div>
+
+        <script src="tween.min.js"></script>
+
+        <script>
+            init();
+            animate();
+
+            function init(){
+                var target = document.getElementById("target");
+
+                var tween = new TWEEN.Tween({x: 0, y: 0, rotation: 0})
+                    .to({ x: 400, y: 50, rotation: 90}, 10000)
+                    .easing( TWEEN.Easing.Bounce.Out)
+                    .onUpdate( function(){
+                        target.style.left = this.x + 'px';  
+                        target.style.top = this.y + 'px';  
+
+                        target.style.MozTransform = 'rotate(' + Math.floor(this.rotation) + 'deg)';
+                        target.style.webkitTransform = 'rotate(' + Math.floor(this.rotation) + 'deg)';
+                    }).start();
+            }
+
+            function animate(){
+                requestAnimationFrame(animate);
+                TWEEN.update();
+            }
+
+        </script>
+    </body>
+</html>

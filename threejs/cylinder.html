@@ -1,0 +1,46 @@
+<html>
+    <body>
+       <script src="three.min.js"></script>
+        <script>
+            var angularSpeed = 0.2;
+            var lastTime = 0;
+
+            function animate(){
+                var time = (new Date()).getTime();
+                var timeDiff = time - lastTime;
+                var angularChange = angularSpeed * timeDiff * 2 * Math.PI / 1000;
+                cyl.rotation.x -= angularChange;
+                lastTime = time;
+            
+                renderer.render(scene, camera);
+
+                requestAnimationFrame(function(){
+                    animate();
+                });
+            }
+ 
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.y = -400;
+            camera.position.z = 400;
+            camera.rotation.x = .70;
+
+            var scene = new THREE.Scene();
+
+            var cyl = new THREE.Mesh(new THREE.CylinderGeometry(100,50,200,20,20,false), new THREE.MeshLambertMaterial({
+                color: 'blue',
+            }));
+            scene.add(cyl);
+
+            var light = new THREE.DirectionalLight('white', 1);
+            light.position.set(0,-400,400).normalize();
+            scene.add(light);
+
+
+            animate();
+        </script>
+    </body>
+</html>
