@@ -83,7 +83,6 @@ function Apply_Gravity(obj, speed, force, max){
 function Gravity(){
     for(var i = 0; i < Fall.length; i++){
         obj = Fall[i];
-        console.log(obj.speed);
         if(obj.intersectsMesh(Ground)){
             obj.speed = obj.speed * -1;
             obj.position.y -= obj.speed;
