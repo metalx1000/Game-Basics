@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>BABYLON.JS Faking Gravity</title>
+
+    <script src="../babylon.js"></script>
+
+    <style type="text/css">
+        html,body,#canvas {
+            width:100%;
+            height:100%;
+            padding:0;
+            margin:0;
+            overflow: hidden;
+        }
+        #buttons{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+<script>
+
+var Scene, camera, light0, ball, plane;
+window.onload = function(){
+    var canvas = document.getElementById("canvas");
+
+    // Check support
+    if (!BABYLON.Engine.isSupported()) {
+        window.alert('Browser not supported');
+    } else {
+        // Babylon
+        var engine = new BABYLON.Engine(canvas, true);
+
+        Scene = new BABYLON.Scene(engine);
+
+        // Attach the camera to the Scene
+        camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(-10, -10, -50), Scene);
+        Scene.activeCamera.attachControl(canvas);
+
+
+        light0 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(0, 0, -20), Scene);
+
+        Fall = [];//add items that are effected by gravity to this array
+
+        ball = BABYLON.Mesh.CreateSphere("Ball", 10, 5.0, Scene);
+        ball.position.y = 5;
+        Apply_Gravity(ball, 0.2, 0.01, 1);
+
+        box = BABYLON.Mesh.CreateBox("Box", 3, Scene);
+        box.position.x = 5;
+        box.position.z = 5;
+        Apply_Gravity(box, 0.1, 0.01, 1);
+
+        //create ground
+        Ground = BABYLON.Mesh.CreateBox("Ground", 200.0, Scene);
+        Ground.position.y = -30;
+        Ground.scaling.y = 0.01
+
+        // Once the Scene is loaded, just register a render loop to render it
+        engine.runRenderLoop(function () {
+            Scene.render();
+            Gravity();
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    } 
+};
+
+function Apply_Gravity(obj, speed, force, max){
+        Fall.push(obj);
+        obj.speed = speed;
+        obj.force = force;
+        obj.max_speed = max;
+}
+
+function Gravity(){
+    for(var i = 0; i < Fall.length; i++){
+        obj = Fall[i];
+        console.log(obj.speed);
+        if(obj.intersectsMesh(Ground)){
+            obj.speed = obj.speed * -1;
+            obj.position.y -= obj.speed;
+            obj.max_speed = obj.max_speed * 0.5;
+        }else{
+            obj.position.y -= obj.speed;
+            if(obj.speed > obj.max_speed){
+                obj.speed = obj.max_speed;
+            }
+            obj.speed += obj.force;
+        }
+    }
+}
+</script>
+</body>
+</html>
