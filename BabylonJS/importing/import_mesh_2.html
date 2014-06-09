@@ -37,7 +37,7 @@ window.onload = function(){
         Scene.activeCamera = Camera;
 
         Scene.enablePhysics();
-        Scene.setGravity(new BABYLON.Vector3(0, -1, 0)); 
+        Scene.setGravity(new BABYLON.Vector3(0, -10, 0)); 
 
         light0 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(0, 0, -20), Scene);
 
@@ -52,7 +52,14 @@ window.onload = function(){
             BABYLON.SceneLoader.ImportMesh("Monkey", "", "monkey.babylon", Scene, function (newMeshes, particleSystems) {
                 newMeshes[0].position.x = -10
                 newMeshes[0].setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 1, friction: 0.5, restitution: 0.7 });
-                newMeshes[0].applyImpulse(new BABYLON.Vector3(.2, 0, .2),new BABYLON.Vector3(0,0,0));
+
+                //create random number for Impulse
+                var x = Math.random() * Math.floor((Math.random() * 3) - 6);
+                var y = Math.random() * Math.floor((Math.random() * 3) - 6);
+                var z = Math.random() * Math.floor((Math.random() * 3) - 6);
+
+                //console.log(x + ":" + y + ":" + z );
+                newMeshes[0].applyImpulse(new BABYLON.Vector3(x, y, z),new BABYLON.Vector3(0,0,0));
             });        
         },1000);
 
