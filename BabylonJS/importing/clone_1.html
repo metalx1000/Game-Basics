@@ -42,10 +42,10 @@ window.onload = function(){
         light0 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(0, 0, -20), Scene);
 
 
-        plane = BABYLON.Mesh.CreatePlane("Plane", 100.0, Scene);
-        plane.position.y = -30;
-        plane.rotate(BABYLON.Axis.X, Math.PI/2, BABYLON.Space.LOCAL);
-        plane.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 0, friction: 0.5, restitution: 0.7 });
+        Ground = BABYLON.Mesh.CreateBox("Ground", 100, Scene);
+        Ground.scaling.y = 0.01;
+        Ground.position.y = -30;
+        Ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 0, friction: 0.5, restitution: 0.7 });
 
         //load Monkey Model
         BABYLON.SceneLoader.ImportMesh("Monkey", "", "monkey.babylon", Scene, function (newMeshes, particleSystems) {
