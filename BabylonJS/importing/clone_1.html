@@ -48,24 +48,22 @@ window.onload = function(){
         plane.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 0, friction: 0.5, restitution: 0.7 });
 
         //load Monkey Model
-        var timer = setInterval(function(){
-            BABYLON.SceneLoader.ImportMesh("Monkey", "", "monkey.babylon", Scene, function (newMeshes, particleSystems) {
-                newMeshes[0].position.x = -10
-                newMeshes[0].setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 1, friction: 0.5, restitution: 0.7 });
+        BABYLON.SceneLoader.ImportMesh("Monkey", "", "monkey.babylon", Scene, function (newMeshes, particleSystems) {
+            Monkey = newMeshes[0];
+            Monkey.position.x = -10
+        });
+       
+        var mainTimer = setInterval(function(){ 
 
-                //create random number for Impulse
-                var x = Math.random() * Math.floor((Math.random() * 3) - 6);
-                var y = Math.random() * Math.floor((Math.random() * 3) - 6);
-                var z = Math.random() * Math.floor((Math.random() * 3) - 6);
-
-                //console.log(x + ":" + y + ":" + z );
-                newMeshes[0].applyImpulse(new BABYLON.Vector3(x, y, z),new BABYLON.Vector3(0,0,0));
-            });        
+                var MonkeyClone = Monkey.clone();
+                MonkeyClone.position.x = 0;
+                MonkeyClone.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 1, friction: 0.5, restitution: 0.7 });
         },1000);
 
         //load Conehead Monkey Model
         BABYLON.SceneLoader.ImportMesh("Conehead", "", "monkey.babylon", Scene, function (newMeshes, particleSystems) {
-            newMeshes[0].position.x = 10;
+            Conehead = newMeshes[0];
+            Conehead.position.x = 10;
         });        
 
         box = BABYLON.Mesh.CreateBox("Box", 3, Scene);
