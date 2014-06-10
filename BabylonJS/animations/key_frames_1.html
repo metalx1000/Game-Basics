@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Very Basic Bone Setup From Blender 3D</title>
+    <script src="../babylon.js"></script>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        #button{
+            position: fixed;
+            top: 0px;
+            left: 0px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <button id="button" onclick="Animate()">Start/Stop Animation</button>
+<script>
+
+var Scene, Camera;
+
+    if (BABYLON.Engine.isSupported()) {
+        var canvas = document.getElementById("renderCanvas");
+        var engine = new BABYLON.Engine(canvas, true);
+
+        BABYLON.SceneLoader.Load("", "keyframes_1.babylon", engine, function (newScene) {
+            Scene = newScene;
+            // Wait for textures and shaders to be ready
+            newScene.executeWhenReady(function () {
+                // Attach camera to canvas inputs
+                //Camera = Scene.activeCamera;
+                Camera2 = new BABYLON.ArcRotateCamera("ArcRotateCamera", 1, 0.8, 10, new BABYLON.Vector3(0, 0, 0), Scene);
+                Scene.activeCamera = Camera2;
+                newScene.activeCamera.attachControl(canvas);
+
+                Cube = Scene.meshes[0];        
+                //stop Animation
+                Scene.stopAnimation(Cube);
+                
+
+                // Once the scene is loaded, just register a render loop to render it
+                engine.runRenderLoop(function() {
+                    newScene.render();
+                });
+            });
+        }, function (progress) {
+            // To do: give progress feedback to user
+        });
+    }
+
+var Ani = false;
+function Animate(){
+    if(Ani == false){
+        Ani = true;
+        Scene.beginAnimation(Cube,1,26,true,1.0)
+    }else{
+        Ani = false;
+        Scene.stopAnimation(Cube);
+    }   
+}
+</script>
+ </body>
+</html>
