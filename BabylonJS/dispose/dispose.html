@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Dispose Problem</title>
+    <script src="../babylon.js"></script>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+
+<script>
+
+var Scene, Camera, canvas, engine;
+
+    if (BABYLON.Engine.isSupported()) {
+        canvas = document.getElementById("renderCanvas");
+        engine = new BABYLON.Engine(canvas, true);
+
+        BABYLON.SceneLoader.Load("", "dispose.babylon", engine, function (newScene) {
+            Scene = newScene;
+            // Wait for textures and shaders to be ready
+            newScene.executeWhenReady(function () {
+                // Attach camera to canvas inputs
+                Camera = Scene.activeCamera;
+                newScene.activeCamera.attachControl(canvas);
+      
+                Load_Objects(); 
+                // Once the scene is loaded, just register a render loop to render it
+                engine.runRenderLoop(function() {
+                    newScene.render();
+                    //Dispose_Mesh();
+                });
+            });
+        }, function (progress) {
+            // To do: give progress feedback to user
+        });
+    }
+
+var Boxes = [];
+function Load_Objects(){
+    for(var i = 0;i < Scene.meshes.length;i++){
+        obj = Scene.meshes[i];
+        obj.ar = obj.name.split(".");
+        obj.type = obj.ar[0];
+        if( obj.type == "Box" ){
+            Boxes.push(obj);
+        }
+    }
+}
+
+setInterval(function(){
+    Dispose_Mesh();    
+    Dispose_Mesh();    
+    Dispose_Mesh();    
+    Dispose_Mesh();    
+    Dispose_Mesh();    
+},1);
+
+function Dispose_Mesh(){
+    if(Boxes[0] != null){
+        Boxes[0].dispose();
+        Boxes.splice(0,1);
+    }
+}
+</script>
+ </body>
+</html>
