@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Very Basic Enemy finds Player</title>
+    <title>Very Basic Enemy Follows Empties to Player</title>
     <script src="../babylon.js"></script>
     <style>
         html, body {
@@ -49,7 +49,7 @@ var Scene, Camera, canvas, engine;
         });
     }
 
-var Walls = [];
+var Empties = [];
 function Load_Objects(){
     Enemy = Scene.getMeshByName("Enemy");
     Player = Scene.getMeshByName("Player");
@@ -58,31 +58,27 @@ function Load_Objects(){
         obj = Scene.meshes[i];
         obj.ar = obj.name.split(".");
         obj.type = obj.ar[0];
-        if( obj.type == "Wall"){
-            Walls.push(obj);
+        if( obj.type == "Empty"){
+            Empties.push(obj);
         }
     }
 }
 
 function Start_Timer(){
+
     var moveTimer = setInterval(function(){
+        Enemy.lookAt(Empties[0].position);
         Enemy.locallyTranslate(new BABYLON.Vector3(0, 0, -0.5));
-        for(var i = 0;i < Walls.length;i++){
-            if(Enemy.intersectsMesh(Walls[i])){
-                Enemy.locallyTranslate(new BABYLON.Vector3(0, 0, 1));
-                var rotate = Math.floor(Math.random() * 3) + 1;
-                Enemy.rotate(BABYLON.Axis.Y, rotate, BABYLON.Space.LOCAL);
-                }else if(Enemy.intersectsMesh(Player)){
-                    clearInterval(moveTimer);
-                    alert("Enemy has kill Player");
-                    break;
-                }
+        if(Enemy.intersectsMesh(Empties[0])){
+            Empties.splice(0,1);
+        }
+
+        if(Enemy.intersectsMesh(Player)){
+            clearInterval(moveTimer);
+            alert("Player has been killed!");
         }
     },50);
 
-    var lookTimer = setInterval(function(){
-        Enemy.lookAt(Player.position);
-    },3000)
 }
 </script>
  </body>
