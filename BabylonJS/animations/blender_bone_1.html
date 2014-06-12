@@ -40,7 +40,8 @@ var Scene, Camera;
                 newScene.activeCamera.attachControl(canvas);
         
                 //start Bone Animation
-                Scene.beginAnimation(Scene.skeletons[0], 0, 113, true, 1.0)
+                Scene.beginAnimation(Scene.skeletons[0], 0, 113, true, 1);
+                //(skeleton,start frame, end frame, loop, speed)
 
                 // Once the scene is loaded, just register a render loop to render it
                 engine.runRenderLoop(function() {
