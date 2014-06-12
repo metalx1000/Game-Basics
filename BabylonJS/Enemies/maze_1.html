@@ -75,8 +75,9 @@ function Start_Timer(){
                 var rotate = Math.floor(Math.random() * 3) + 1;
                 Enemy.rotate(BABYLON.Axis.Y, rotate, BABYLON.Space.LOCAL);
                 }else if(Enemy.intersectsMesh(Player)){
-                    alert("Enemy has kill Player");
                     clearInterval(moveTimer);
+                    alert("Enemy has kill Player");
+                    break;
                 }
         }
     },50);
