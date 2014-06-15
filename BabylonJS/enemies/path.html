@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Enemy follows path</title>
+    <script src="../babylon.js"></script>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+
+<script>
+
+    if (BABYLON.Engine.isSupported()) {
+        canvas = document.getElementById("renderCanvas");
+        engine = new BABYLON.Engine(canvas, true);
+
+        BABYLON.SceneLoader.Load("", "path.babylon", engine, function (newScene) {
+            Scene = newScene;
+            // Wait for textures and shaders to be ready
+            newScene.executeWhenReady(function () {
+                // Attach camera to canvas inputs
+                Camera = Scene.activeCamera;
+                newScene.activeCamera.attachControl(canvas);
+      
+                // Once the scene is loaded, just register a render loop to render it
+                engine.runRenderLoop(function() {
+                    newScene.render();
+                });
+            });
+        }, function (progress) {
+            // To do: give progress feedback to user
+        });
+    }
+
+
+</script>
+ </body>
+</html>

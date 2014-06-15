@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>BABYLON.JS Basic Physics Scene</title>
+
+    <script src="../babylon.js"></script>
+
+    <style type="text/css">
+        html,body,#canvas {
+            width:100%;
+            height:100%;
+            padding:0;
+            margin:0;
+            overflow: hidden;
+        }
+        #buttons{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+<script>
+
+var Scene, Camera, light0, ball, plane;
+window.onload = function(){
+    var canvas = document.getElementById("canvas");
+
+    // Check support
+    if (!BABYLON.Engine.isSupported()) {
+        window.alert('Browser not supported');
+    } else {
+        // Babylon
+        var engine = new BABYLON.Engine(canvas, true);
+
+        Scene = new BABYLON.Scene(engine);
+        Scene.enablePhysics();
+        Scene.setGravity(new BABYLON.Vector3(0, -10, 0));
+
+        light0 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(0, 0, -20), Scene);
+
+
+    //Adding of the Arc Rotate Camera
+    var Camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, new BABYLON.Vector3.Zero(), Scene);
+    Scene.activeCamera.attachControl(canvas);
+
+    // MESHES
+    //------------
+
+    //Creation of a box
+    //(name of the box, size, Scene)
+    var box = BABYLON.Mesh.CreateBox("Box", 6.0, Scene);
+
+    //Creation of a sphere 
+    //(name of the sphere, segments, diameter, Scene) 
+    var sphere = BABYLON.Mesh.CreateSphere("Sphere", 10.0, 10.0, Scene);
+
+    //Creation of a plane
+    //(name of the plane, size, Scene)
+    plane = BABYLON.Mesh.CreatePlane("Plane", 50.0, Scene);
+
+
+    // Creation of a torus
+    // (name, diameter, thickness, tessellation, Scene, updatable)
+    var torus = BABYLON.Mesh.CreateTorus("torus", 5, 1, 10, Scene, false);
+
+
+    //Positioning the elements
+    box.position = new BABYLON.Vector3(-10,0,0);//Positionnign by a vector
+    sphere.position = new BABYLON.Vector3(0,10,0);//Positionnign by a vector
+    plane.position.z = 10;//Positionning by a simple coordinate
+    torus.position.x = 10;
+
+    var mStones = new BABYLON.StandardMaterial("Stones", Scene);
+    mStones.diffuseTexture = new BABYLON.Texture("stones.png", Scene);
+    mStones.specularColor = new BABYLON.Color3(0, 0, 0);
+    mStones.specularPower = 100;
+    mStones.diffuseTexture.uScale = 5.0;
+    mStones.diffuseTexture.vScale = 5.0;
+    box.material = mStones;
+    plane.material = mStones; 
+
+
+
+        // Once the Scene is loaded, just register a render loop to render it
+        engine.runRenderLoop(function () {
+            Scene.render();
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    } 
+};
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Cubes From Blender 3D</title>
+    <script src="../babylon.js"></script>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+
+<script>
+
+    if (BABYLON.Engine.isSupported()) {
+        canvas = document.getElementById("renderCanvas");
+        engine = new BABYLON.Engine(canvas, true);
+
+        BABYLON.SceneLoader.Load("", "cubes.babylon", engine, function (newScene) {
+            Scene = newScene;
+            // Wait for textures and shaders to be ready
+            newScene.executeWhenReady(function () {
+                // Attach camera to canvas inputs
+                //Camera = Scene.activeCamera;
+                Camera2 = new BABYLON.ArcRotateCamera("ArcRotateCamera", -2, 0.8, 20, new BABYLON.Vector3(0, 5, 0), Scene);
+                Scene.activeCamera = Camera2;
+                newScene.activeCamera.attachControl(canvas);
+
+                Scene.enablePhysics();
+                Scene.setGravity(new BABYLON.Vector3(0, -10, 0)); 
+
+                Cubes = [];
+
+                for(var i = 0;i<Scene.meshes.length;i++){
+                    var obj = Scene.meshes[i];
+                    var name = obj.name.split(".");
+                    var type = name[0];
+                    if(type == "Cube"){
+                        Cubes.push(obj);
+                    }
+                }      
+
+                // Once the scene is loaded, just register a render loop to render it
+                engine.runRenderLoop(function() {
+                    newScene.render();
+                });
+            });
+        }, function (progress) {
+            // To do: give progress feedback to user
+        });
+    }
+
+
+</script>
+ </body>
+</html>

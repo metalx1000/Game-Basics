@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>BABYLON.JS Rotate around a point Scene</title>
+
+    <script src="../babylon.js"></script>
+
+    <style type="text/css">
+        html,body,#canvas {
+            width:100%;
+            height:100%;
+            padding:0;
+            margin:0;
+            overflow: hidden;
+        }
+        #buttons{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+<script>
+
+window.onload = function(){
+    var canvas = document.getElementById("canvas");
+
+    // Check support
+    if (!BABYLON.Engine.isSupported()) {
+        window.alert('Browser not supported');
+    } else {
+        // Babylon
+        var engine = new BABYLON.Engine(canvas, true);
+
+        Scene = new BABYLON.Scene(engine);
+
+//        Camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, 3, -75), Scene);
+        Camera = new BABYLON.ArcRotateCamera("Camera", 3 * Math.PI / 2, Math.PI / 8, 50, BABYLON.Vector3.Zero(), Scene);
+
+        light0 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(0, 30, -50), Scene);
+
+        //Creation of a box
+        //(name of the box, size, scene)
+        var box = BABYLON.Mesh.CreateBox("box", 6.0, Scene);
+        
+        // Creation of a torus
+        // (name, diameter, thickness, tessellation, scene, updatable)
+        var torus = BABYLON.Mesh.CreateTorus("torus", 5, 1, 10, Scene, false);
+        
+        // Moving elements
+        box.position = new BABYLON.Vector3(-10, 0, 0);   // Using a vector
+        torus.position.x = 10;
+
+        var p = BABYLON.Matrix.Translation(-10,0,0); // (x,y,z) must be expressed in parent space
+        box.setPivotMatrix(p);
+
+        // Attach the camera to the scene
+        Scene.activeCamera.attachControl(canvas);
+
+        // Once the scene is loaded, just register a render loop to render it
+        engine.runRenderLoop(function () {
+            Scene.render();
+            box.rotate(BABYLON.Axis.Y, 0.01, BABYLON.Space.Local);
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    } 
+};
+
+
+
+</script>
+</body>
+</html>
