@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>BABYLON.JS Basic Camera Jump Scene</title>
+
+    <script src="../babylon.js"></script>
+    <script src="../cannon.js"></script>
+
+    <style type="text/css">
+        html,body,#canvas {
+            width:100%;
+            height:100%;
+            padding:0;
+            margin:0;
+            overflow: hidden;
+        }
+        #fps{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            font-size: 50px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id=fps></div>
+<script>
+
+window.onload = function(){
+    var canvas = document.getElementById("canvas");
+
+    // Check support
+    if (!BABYLON.Engine.isSupported()) {
+        window.alert('Browser not supported');
+    } else {
+        // Babylon
+        var engine = new BABYLON.Engine(canvas, true);
+
+        scene = new BABYLON.Scene(engine);
+        scene.enablePhysics();
+        scene.setGravity(new BABYLON.Vector3(0, -0.5, 0));
+        // Creating a camera looking to the zero point (0,0,0), a light, and a sphere of size 1
+        //camera = new BABYLON.FreeCamera("Camera", 1, 0.8, 10, scene);
+        camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(-10, -10, -15), scene);
+        //Then apply collisions and gravity to the active camera
+        camera.checkCollisions = true;
+        camera.applyGravity = true;
+        //Set the ellipsoid around the camera (e.g. your player's size)
+        camera.ellipsoid = new BABYLON.Vector3(3, 3, 3);
+
+        light0 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(0, 0, -20), scene);
+
+
+        plane = BABYLON.Mesh.CreatePlane("Plane", 200.0, scene);
+        plane.position.y = -30;
+        plane.rotate(BABYLON.Axis.X, Math.PI/2, BABYLON.Space.LOCAL);
+        plane.checkCollisions = true;
+
+        // Attach the camera to the scene
+        scene.activeCamera.attachControl(canvas);
+
+        // Once the scene is loaded, just register a render loop to render it
+        engine.runRenderLoop(function () {
+            scene.render();
+            HUD_FPS();
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    } 
+};
+
+window.addEventListener("mousedown", function(event) {
+    console.log("jump");
+    camera.cameraDirection.y = 20;
+});
+
+function HUD_FPS(){
+    var html = document.getElementById("fps");
+    var fps = BABYLON.Tools.GetFps().toFixed() + " fps";
+    html.innerHTML = fps;
+
+}
+
+</script>
+</body>
+</html>
