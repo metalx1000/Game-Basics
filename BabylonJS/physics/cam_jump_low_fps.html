@@ -57,6 +57,15 @@ window.onload = function(){
         plane.rotate(BABYLON.Axis.X, Math.PI/2, BABYLON.Space.LOCAL);
         plane.checkCollisions = true;
 
+        for(var i = 0;i<3000;i++){
+            ball = BABYLON.Mesh.CreateSphere("Ball", 30, 5.0, scene);
+            ball.position.x = Math.random() * 200 - 100;
+            ball.position.y = Math.random() * 200 - 100;
+            ball.position.z = Math.random() * 200 - 100;
+
+            var x = i/30;
+            document.title = "Loading: " + x + "%";
+        }
 
         // Attach the camera to the scene
         scene.activeCamera.attachControl(canvas);
