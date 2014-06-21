@@ -36,6 +36,7 @@ window.onload = function(){
         camera.checkCollisions = true;
         //Set the ellipsoid around the camera (e.g. your player's size)
         camera.ellipsoid = new BABYLON.Vector3(3, 3, 3);
+        scene.activeCamera.attachControl(canvas);
 
         light0 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(0, 0, -20), scene);
 
@@ -46,13 +47,10 @@ window.onload = function(){
         Ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 0, friction: 0.5, restitution: 0.7 });
         Ground.checkCollisions = true;
 
-        
-        // Attach the camera to the scene
-        scene.activeCamera.attachControl(canvas);
 
-        ball = BABYLON.Mesh.CreateSphere("Ball", 30, 5.0, scene);
+        mesh = BABYLON.Mesh.CreateSphere("Ball", 30, 5.0, scene);
+        main_timer(true);
 
-        main_timer();
         // Once the scene is loaded, just register a render loop to render it
         engine.runRenderLoop(function () {
             scene.render();
@@ -70,8 +68,6 @@ window.onload = function(){
             if(event.which == 1){
                 console.log("jump");
                 jump = 10;
-            }else{
-                Load_Spheres();
             }
         });
 
@@ -80,48 +76,8 @@ window.onload = function(){
     } 
 };
 
-function HUD_FPS(){
-    var html = document.getElementById("fps");
-    var fps = BABYLON.Tools.GetFps().toFixed() + " fps<br>";
-    var spheres = x + " Spheres";
-    html.innerHTML = fps + spheres;
-
-}
-
-var jump = 0;
-function main_timer(){
-    var grav_time = setInterval(function(){
-
-        Load_Spheres();
-
-        if(jump > 0){
-            jump -= 1;
-            camera.cameraDirection.y = jump * 0.1;
-        }else{
-            camera.cameraDirection.y = -0.5;
-        }
-    },50);
-
-}
-
-var x = 1;
-function Load_Spheres(){
-    x += 1 ;
-    var ballclone = ball.clone("ball " + x);
-    ballclone.position.x = Math.random() * 200 - 100;
-    ballclone.position.y = Math.random() * 200 - 100;
-    ballclone.position.z = Math.random() * 200 - 100;
-    ballclone.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 1, friction: 0.5, restitution: 0.7 }); 
-    document.title = x + " Meshes";
-    
-    if(x % 50 == 0){
-        var html = document.getElementById("info");
-        var fps = BABYLON.Tools.GetFps().toFixed() + " fps with ";
-        var meshes = x + " Meshes<br>";
-        html.innerHTML += fps + meshes;
-    } 
-
-}
 </script>
+
+<script src="functions.js"></script>
 </body>
 </html>

@@ -5,12 +5,15 @@
 
     <script src="../babylon.js"></script>
     <script src="../cannon.js"></script>
+
     <link rel="stylesheet" href="../css/basic.css"/>
 
 </head>
 <body>
     <canvas id="canvas"></canvas>
-    <div id=fps></div>
+    <div id="fps"></div>
+
+    <div id="info"></div>
 <script>
 
 var scene, engine, camera;
@@ -26,10 +29,12 @@ window.onload = function(){
 
         scene = new BABYLON.Scene(engine);
 
+
         camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(-10, -10, -15), scene);
         camera.checkCollisions = true;
         //Set the ellipsoid around the camera (e.g. your player's size)
         camera.ellipsoid = new BABYLON.Vector3(3, 3, 3);
+        scene.activeCamera.attachControl(canvas);
 
         light0 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(0, 0, -20), scene);
 
@@ -37,16 +42,12 @@ window.onload = function(){
         Ground = BABYLON.Mesh.CreateBox("Ground", 200, scene);
         Ground.scaling.y = 0.01;
         Ground.position.y = -30;
-        Ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 0, friction: 0.5, restitution: 0.7 });
         Ground.checkCollisions = true;
 
-        
-        // Attach the camera to the scene
-        scene.activeCamera.attachControl(canvas);
 
-        ball = BABYLON.Mesh.CreateSphere("Ball", 30, 5.0, scene);
-
+        mesh = BABYLON.Mesh.CreateSphere("Ball", 30, 5.0, scene);
         main_timer();
+
         // Once the scene is loaded, just register a render loop to render it
         engine.runRenderLoop(function () {
             scene.render();
@@ -64,8 +65,6 @@ window.onload = function(){
             if(event.which == 1){
                 console.log("jump");
                 jump = 10;
-            }else{
-                Load_Spheres();
             }
         });
 
@@ -74,42 +73,8 @@ window.onload = function(){
     } 
 };
 
-function HUD_FPS(){
-    var html = document.getElementById("fps");
-    var fps = BABYLON.Tools.GetFps().toFixed() + " fps<br>";
-    var spheres = x + " Spheres";
-    html.innerHTML = fps + spheres;
-
-}
-
-var jump = 0;
-function main_timer(){
-    var grav_time = setInterval(function(){
-
-        Load_Spheres();
-
-        if(jump > 0){
-            jump -= 1;
-            camera.cameraDirection.y = jump * 0.1;
-        }else{
-            camera.cameraDirection.y = -0.5;
-        }
-    },50);
-
-}
-
-var x = 1;
-function Load_Spheres(){
-    x += 1 ;
-    var ballclone = ball.clone("ball " + x);
-    ballclone.position.x = Math.random() * 200 - 100;
-    ballclone.position.y = Math.random() * 200 - 100;
-    ballclone.position.z = Math.random() * 200 - 100;
-    
-    document.title = x + " Spheres";
-
-
-}
 </script>
+
+<script src="functions.js"></script>
 </body>
 </html>

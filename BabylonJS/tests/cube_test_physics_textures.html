@@ -12,6 +12,7 @@
 <body>
     <canvas id="canvas"></canvas>
     <div id=fps></div>
+    <div id=info></div>
 <script>
 
 var scene, engine, camera;
@@ -48,16 +49,16 @@ window.onload = function(){
         // Attach the camera to the scene
         scene.activeCamera.attachControl(canvas);
 
-        box = BABYLON.Mesh.CreateBox("Box", 5, scene);
+        mesh = BABYLON.Mesh.CreateBox("Box", 5, scene);
 
     var mStones = new BABYLON.StandardMaterial("Crate", scene);
     mStones.diffuseTexture = new BABYLON.Texture("crate.jpg", scene);
     mStones.specularColor = new BABYLON.Color3(0, 0, 0);
     mStones.specularPower = 100;
-    box.material = mStones;
+    mesh.material = mStones;
 
 
-        main_timer();
+        main_timer(true);
         // Once the scene is loaded, just register a render loop to render it
         engine.runRenderLoop(function () {
             scene.render();
@@ -85,42 +86,8 @@ window.onload = function(){
     } 
 };
 
-function HUD_FPS(){
-    var html = document.getElementById("fps");
-    var fps = BABYLON.Tools.GetFps().toFixed() + " fps<br>";
-    var boxes = x + " Boxes";
-    html.innerHTML = fps + boxes;
-
-}
-
-var jump = 0;
-function main_timer(){
-    var grav_time = setInterval(function(){
-
-        Load_Boxes();
-
-        if(jump > 0){
-            jump -= 1;
-            camera.cameraDirection.y = jump * 0.1;
-        }else{
-            camera.cameraDirection.y = -0.5;
-        }
-    },50);
-
-}
-
-var x = 1;
-function Load_Boxes(){
-    x += 1 ;
-    var boxclone = box.clone("box " + x);
-    boxclone.position.x = Math.random() * 200 - 100;
-    boxclone.position.y = Math.random() * 200 - 100;
-    boxclone.position.z = Math.random() * 200 - 100;
-    boxclone.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 1, friction: 0.5, restitution: 0.7 }); 
-    document.title = x + " boxes";
-
-
-}
 </script>
+<script src="functions.js"></script>
+
 </body>
 </html>
