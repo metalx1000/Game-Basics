@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>BABYLON.JS Basic Camera Jump Scene</title>
+
+    <script src="../babylon.js"></script>
+    <script src="../cannon.js"></script>
+
+    <style type="text/css">
+        html,body,#canvas {
+            width:100%;
+            height:100%;
+            padding:0;
+            margin:0;
+            overflow: hidden;
+        }
+        #fps{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            font-size: 50px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id=fps></div>
+<script>
+
+var scene, engine, camera;
+window.onload = function(){
+    var canvas = document.getElementById("canvas");
+
+    // Check support
+    if (!BABYLON.Engine.isSupported()) {
+        window.alert('Browser not supported');
+    } else {
+        // Babylon
+        var engine = new BABYLON.Engine(canvas, true);
+
+        scene = new BABYLON.Scene(engine);
+
+        scene.enablePhysics();
+        scene.setGravity(new BABYLON.Vector3(0, -10, 0));
+
+        camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(-10, -10, -15), scene);
+        camera.checkCollisions = true;
+        //Set the ellipsoid around the camera (e.g. your player's size)
+        camera.ellipsoid = new BABYLON.Vector3(3, 3, 3);
+
+        light0 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(0, 0, -20), scene);
+
+
+        Ground = BABYLON.Mesh.CreateBox("Ground", 200, scene);
+        Ground.scaling.y = 0.01;
+        Ground.position.y = -30;
+        Ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 0, friction: 0.5, restitution: 0.7 });
+        Ground.checkCollisions = true;
+
+        
+        // Attach the camera to the scene
+        scene.activeCamera.attachControl(canvas);
+
+        box = BABYLON.Mesh.CreateBox("Box", 5, scene);
+
+    var mStones = new BABYLON.StandardMaterial("Crate", scene);
+    mStones.diffuseTexture = new BABYLON.Texture("crate.jpg", scene);
+    mStones.specularColor = new BABYLON.Color3(0, 0, 0);
+    mStones.specularPower = 100;
+    box.material = mStones;
+
+
+        main_timer();
+        // Once the scene is loaded, just register a render loop to render it
+        engine.runRenderLoop(function () {
+            scene.render();
+            HUD_FPS();
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+
+
+        window.addEventListener("mousedown", function(event) {
+
+            if(event.which == 1){
+                console.log("jump");
+                jump = 10;
+            }else{
+                Load_Spheres();
+            }
+        });
+
+
+
+    } 
+};
+
+function HUD_FPS(){
+    var html = document.getElementById("fps");
+    var fps = BABYLON.Tools.GetFps().toFixed() + " fps<br>";
+    var boxes = x + " Boxes";
+    html.innerHTML = fps + boxes;
+
+}
+
+var jump = 0;
+function main_timer(){
+    var grav_time = setInterval(function(){
+
+        Load_Boxes();
+
+        if(jump > 0){
+            jump -= 1;
+            camera.cameraDirection.y = jump * 0.1;
+        }else{
+            camera.cameraDirection.y = -0.5;
+        }
+    },50);
+
+}
+
+var x = 1;
+function Load_Boxes(){
+    x += 1 ;
+    var boxclone = box.clone("box " + x);
+    boxclone.position.x = Math.random() * 200 - 100;
+    boxclone.position.y = Math.random() * 200 - 100;
+    boxclone.position.z = Math.random() * 200 - 100;
+    boxclone.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 1, friction: 0.5, restitution: 0.7 }); 
+    document.title = x + " boxes";
+
+
+}
+</script>
+</body>
+</html>
