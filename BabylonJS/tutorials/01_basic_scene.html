@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+ <head>
+    <title>Babylon - Tutorials from www.FilmsByKris.com</title>
+    <script src="../babylon.js"></script>
+    <link rel="stylesheet" href="../css/basic.css"/>
+ </head>
+ <body>
+    <canvas id="renderCanvas"></canvas>
+
+    <script>
+
+        var canvas = document.getElementById("renderCanvas");
+        var engine = new BABYLON.Engine(canvas, true);
+        var Scene = new BABYLON.Scene(engine);
+
+        //cameras
+        var Camera = new BABYLON.ArcRotateCamera("Camera", 1, 1, 20, new BABYLON.Vector3(0, 0, 0), Scene);
+
+        //lights
+        var light0 = new BABYLON.PointLight("Omni", new BABYLON.Vector3(0, 0, 10), Scene);
+
+        //meshes
+        //sphere parameters are: name, number of segments (highly detailed or not), size, scene to attach the mesh.
+        var ball = BABYLON.Mesh.CreateSphere("Ball", 10, 1.0, Scene);
+        ball.position.x = -5; //position mesh
+
+        //box parameters are: name, size of the box, the scene to attach the mesh.
+        var box = BABYLON.Mesh.CreateBox("Box", 1, Scene);
+        box.position.x = -10; //position mesh
+
+        //plane parameters are: name, size, and scene to attach the mesh.
+        var plane = BABYLON.Mesh.CreatePlane("Plane", 10.0, Scene);
+        plane.position.x = 5; //position mesh
+        plane.rotation.y = Math.PI; //rotate 180
+
+        //cylinder parameters are:
+        //name, height, diameterTop, diameterBottom, tessellation (highly detailed or not), scene, updatable.
+        var cylinder = BABYLON.Mesh.CreateCylinder("cylinder", 3, 3, 3, 20, Scene, false);
+        cylinder.position.x = 15; //position mesh
+
+        Scene.activeCamera.attachControl(canvas);
+        
+        engine.runRenderLoop(function () {
+            Scene.render();
+        });
+
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+
+    </script>
+ </body>
+</html>
