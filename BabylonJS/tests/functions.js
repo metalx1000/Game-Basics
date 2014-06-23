@@ -29,7 +29,9 @@ function Load_Meshes(physics){
     meshclone.position.x = Math.random() * 200 - 100;
     meshclone.position.y = Math.random() * 200 - 100;
     meshclone.position.z = Math.random() * 200 - 100;
-    if(physics == true){
+    if(physics == true && impostor == "box"){
+        meshclone.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 1, friction: 0.5, restitution: 0.7 }); 
+    }else if(physics == true && impostor == "sphere"){
         meshclone.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 1, friction: 0.5, restitution: 0.7 }); 
     }
     document.title = x + " Meshes";
