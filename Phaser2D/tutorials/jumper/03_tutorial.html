@@ -13,7 +13,7 @@ http://www.photonstorm.com/phaser/tutorial-making-your-first-phaser-game
 -->
 	<meta charset="UTF-8" />
     <title>Phaser - Tutorial</title>
-	<script type="text/javascript" src="js/phaser.min.js"></script>
+	<script type="text/javascript" src="../js/phaser.min.js"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -35,8 +35,6 @@ function preload() {
     game.load.image('star', 'res/star.png');
     game.load.spritesheet('dude', 'res/dude.png', 32, 48);
 
-    game.load.image('disk', 'res/sprites/ra_dont_crack_under_pressure.png');
-
     //Preload Sounds
     game.load.audio('NIN', ['http://static.echonest.com/audio2/1353978910554/06 What If We Could .mp3']);
     game.load.audio('coin', 'res/coin.wav');
@@ -51,8 +49,6 @@ var platforms;
 var cursors;
 
 var stars;
-var score = 0;
-var scoreText;
 
 function create() {
 
@@ -109,6 +105,7 @@ function create() {
     player.body.collideWorldBounds = true;
 
     //animations
+    //name,frames,speed,loop
     player.animations.add('left', [0, 1, 2, 3], 10, true);
     player.animations.add('right', [5, 6, 7, 8], 10, true);
 
@@ -117,21 +114,11 @@ function create() {
     stars.enableBody = true;
     Load_Stars();
 
-    //Score Text
-    scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
-
     //Control setup
     cursors = game.input.keyboard.createCursorKeys();
    
-    //Go Full Screen when Game Window Clicked  
-    game.input.onDown.add(gofull, this);
 }
 
-function gofull(){
-    //Set the game to strech and fill the screen
-    game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
-    game.scale.startFullScreen();
-}
 
 function Load_Stars(){
     //Create stars and spaced them apart
@@ -152,8 +139,6 @@ function update() {
     game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(stars, platforms);
 
-    //If Player touches star, run function "collectStar,"  
-    game.physics.arcade.overlap(player, stars, collectStar, null, this);
 
     //Reset the players velocity 
     player.body.velocity.x = 0;
@@ -191,34 +176,6 @@ function update() {
 
 }
 
-function collectStar (player, star) {
-    
-    //Removes the star from the screen
-    star.kill();
-
-    //Add and update the score
-    score += 10;
-    scoreText.text = 'Score: ' + score;
-
-    //play coin sound
-    coin = game.add.audio('coin');
-    coin.play();
-
-    //update number of stars left in scene
-    numStars -= 1;
-
-    //if all stars are collected
-    if(numStars == 0){
-        //play victory music
-        win = game.add.audio('win');
-        win.play();
-        
-        //reload stars and continue to play
-        numStars = 12;
-        Load_Stars();
-    }
-
-}
 
 </script>
 

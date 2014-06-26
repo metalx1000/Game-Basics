@@ -1,0 +1,224 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+<!--
+Created by Kris Occhipinti
+http://filmsbykris.com
+
+code can be found at:
+https://github.com/metalx1000/Game-Basics
+
+Based on the tutorial at :
+http://www.photonstorm.com/phaser/tutorial-making-your-first-phaser-game
+-->
+	<meta charset="UTF-8" />
+    <title>Phaser - Tutorial</title>
+	<script type="text/javascript" src="../js/phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var numStars = 12;
+
+function preload() {
+
+    //preload images
+    game.load.image('sky', 'res/sky.jpg');
+    game.load.image('ground', 'res/stone.png');
+    game.load.image('star', 'res/star.png');
+    game.load.spritesheet('dude', 'res/dude.png', 32, 48);
+
+    //Preload Sounds
+    game.load.audio('NIN', ['http://static.echonest.com/audio2/1353978910554/06 What If We Could .mp3']);
+    game.load.audio('coin', 'res/coin.wav');
+    game.load.audio('startup', 'res/startup.wav');
+    game.load.audio('jump', 'res/jump.wav');
+    game.load.audio('win', 'res/win.wav');
+
+}
+
+var player;
+var platforms;
+var cursors;
+
+var stars;
+var score = 0;
+var scoreText;
+
+function create() {
+
+    //Enable the Physics 
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    //Load background
+    game.add.sprite(0, 0, 'sky');
+
+    //load music
+    music = game.add.audio('NIN');
+    music.play('',0,1,true);
+
+    //load startup sound and play it
+    startup = game.add.audio('startup');
+    startup.play();
+
+    //platforms group 
+    platforms = game.add.group();
+
+    //Enable physics for platform group
+    platforms.enableBody = true;
+
+    //Create the ground.
+    for(var i = 0;i < 800;i+=128){
+        var ground = platforms.create(i, game.world.height - 64, 'ground');
+        //stops ground from moving
+        ground.body.immovable = true;
+    }
+
+
+    //Create Ledges
+    for(var i = 400;i < 800;i += 64){
+        var ledge = platforms.create(i, 400, 'ground');
+        ledge.scale.setTo(0.5,0.5);
+        ledge.body.immovable = true;
+    }
+
+    ledge = platforms.create(0, 250, 'ground');
+    ledge.body.immovable = true;
+
+    ledge = platforms.create(600, 200, 'ground');
+    ledge.body.immovable = true;
+
+    //The player and its settings
+    player = game.add.sprite(32, game.world.height - 150, 'dude');
+
+    //Enable physics on the player
+    game.physics.arcade.enable(player);
+
+    //Player physics properties
+    player.body.bounce.y = 0.2;
+    player.body.gravity.y = 300;
+    player.body.collideWorldBounds = true;
+
+    //animations
+    player.animations.add('left', [0, 1, 2, 3], 10, true);
+    player.animations.add('right', [5, 6, 7, 8], 10, true);
+
+    //Create stars to collect
+    stars = game.add.group();
+    stars.enableBody = true;
+    Load_Stars();
+
+    //Score Text
+    scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+
+    //Control setup
+    cursors = game.input.keyboard.createCursorKeys();
+   
+    //Go Full Screen when Game Window Clicked  
+    game.input.onDown.add(gofull, this);
+}
+
+function gofull(){
+    //Set the game to strech and fill the screen
+    game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
+    game.scale.startFullScreen();
+}
+
+function Load_Stars(){
+    //Create stars and spaced them apart
+    for (var i = 0; i < numStars; i++)
+    {
+        //Create a star 
+        var star = stars.create(i * 70, 0, 'star');
+        //Add gravity
+        star.body.gravity.y = 300;
+        //Give Star random bounce value
+        star.body.bounce.y = 0.7 + Math.random() * 0.2;
+    }
+}
+
+function update() {
+
+    //Set Collisions
+    game.physics.arcade.collide(player, platforms);
+    game.physics.arcade.collide(stars, platforms);
+
+    //If Player touches star, run function "collectStar,"  
+    game.physics.arcade.overlap(player, stars, collectStar, null, this);
+
+    //Reset the players velocity 
+    player.body.velocity.x = 0;
+
+    if (cursors.left.isDown)
+    {
+        //  Move to the left
+        player.body.velocity.x = -150;
+
+        player.animations.play('left');
+    }
+    else if (cursors.right.isDown)
+    {
+        //  Move to the right
+        player.body.velocity.x = 150;
+
+        player.animations.play('right');
+    }
+    else
+    {
+        //  Stand still
+        player.animations.stop();
+
+        player.frame = 4;
+    }
+    
+    //  Allow the player to jump if they are touching the ground.
+    if (cursors.up.isDown && player.body.touching.down)
+    {
+        jump = game.add.audio('jump');
+        jump.play();
+
+        player.body.velocity.y = -350;
+    }
+
+}
+
+function collectStar (player, star) {
+    
+    //Removes the star from the screen
+    star.kill();
+
+    //Add and update the score
+    score += 10;
+    scoreText.text = 'Score: ' + score;
+
+    //play coin sound
+    coin = game.add.audio('coin');
+    coin.play();
+
+    //update number of stars left in scene
+    numStars -= 1;
+
+    //if all stars are collected
+    if(numStars == 0){
+        //play victory music
+        win = game.add.audio('win');
+        win.play();
+        
+        //reload stars and continue to play
+        numStars = 12;
+        Load_Stars();
+    }
+
+}
+
+</script>
+
+</body>
+</html>
