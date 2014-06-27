@@ -177,8 +177,10 @@ function Load_Stars(){
 function update() {
     //update fpsText
     fpsText.text = "fps: " + game.time.fps;
-    console.log(game.time.fps);
+    //console.log(game.time.fps);
 
+    var mDiff = Math.abs(mouseY - game.input.mousePointer.position.y);
+    console.log(mDiff);
     //Set Collisions
     game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(stars, platforms);
@@ -201,7 +203,7 @@ function update() {
 
         //game.camera.x += camSpeed;
     }
-    else if(game.input.mousePointer.position.y != mouseY){
+    else if(mDiff > 20){
        //  Move to the right
         player.body.velocity.x = 150;
         player.animations.play('right');
