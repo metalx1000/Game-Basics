@@ -27,7 +27,6 @@ var height = 600;
 var width = 800
 
 var game = new Phaser.Game(width, height, Phaser.AUTO, '', { preload: preload, create: create, update: update });
-var numStars = 12;
 
 function preload() {
 
@@ -54,7 +53,11 @@ var stars;
 var score = 0;
 var scoreText;
 
-var camSpeed = 4;
+var world_height = height;
+var world_width = 2000;
+
+var numStarsStart = Math.floor(world_width / 70);
+var numStars = numStarsStart; 
 
 function create() {
 
@@ -62,10 +65,10 @@ function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     //set world size
-    game.world.setBounds(0, 0, 2000, height);
+    game.world.setBounds(0, 0, world_width, world_height);
 
     //Load background
-    game.add.sprite(0, 0, 'sky');
+    game.add.tileSprite(0, 0, world_width, world_height, 'sky');
 
     //load music
     music = game.add.audio('NIN');
@@ -90,11 +93,11 @@ function create() {
 
 
     //Create Ledges
-    for(var i = 400;i < 800;i += 64){
-        var ledge = platforms.create(i, 400, 'ground');
-        ledge.scale.setTo(0.5,0.5);
-        ledge.body.immovable = true;
-    }
+    Create_Ledges(400,400,400);
+    Create_Ledges(550,800,1000);
+    Create_Ledges(250,600,400);
+    Create_Ledges(250,1200,400);
+    Create_Ledges(400,1500,400);
 
     ledge = platforms.create(0, 250, 'ground');
     ledge.body.immovable = true;
@@ -124,6 +127,7 @@ function create() {
 
     //Score Text
     scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    scoreText.fixedToCamera = true;//follow camera
 
     //Control setup
     cursors = game.input.keyboard.createCursorKeys();
@@ -132,6 +136,16 @@ function create() {
     game.input.onDown.add(gofull, this);
 }
 
+function Create_Ledges(top,left, length){
+    //Create Ledges
+    length = left + length
+    for(var i = left;i < length;i += 64){
+        var ledge = platforms.create(i, top, 'ground');
+        ledge.scale.setTo(0.5,0.5);
+        ledge.body.immovable = true;
+    }
+
+}
 function gofull(){
     //Set the game to strech and fill the screen
     game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
@@ -214,7 +228,6 @@ function collectStar (player, star) {
 
     //update number of stars left in scene
     numStars -= 1;
-
     //if all stars are collected
     if(numStars == 0){
         //play victory music
@@ -222,7 +235,7 @@ function collectStar (player, star) {
         win.play();
         
         //reload stars and continue to play
-        numStars = 12;
+        numStars = numStarsStart;
         Load_Stars();
     }
 
