@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Toy Phone</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1, IE=9">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="Phaser App">
+    <meta name="viewport" content="initial-scale=1 maximum-scale=1 user-scalable=0 minimal-ui" />
+    <script src="../js/phaser.min.js"></script>
+</head>
+<body>
+
+    <div id="game"></div>
+    <div id="orientation"></div>
+<script>
+var game = new Phaser.Game(384, 800, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
+var btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9;
+function preload() {
+
+    game.load.image('btnc', 'res/btnc.png');
+/*
+    game.load.image('btn0', 'res/btn0.png');
+    game.load.image('btn1', 'res/btn1.png');
+    game.load.image('btn2', 'res/btn2.png');
+    game.load.image('btn3', 'res/btn3.png');
+    game.load.image('btn4', 'res/btn4.png');
+    game.load.image('btn5', 'res/btn5.png');
+    game.load.image('btn6', 'res/btn6.png');
+    game.load.image('btn7', 'res/btn7.png');
+    game.load.image('btn8', 'res/btn8.png');
+    game.load.image('btn9', 'res/btn9.png');
+    game.load.image('btn10', 'res/btnpound.png');
+    game.load.image('btn11', 'res/btnstar.png');
+*/
+}
+
+function create() {
+
+    //  This creates a simple sprite that is using our loaded image and
+    //  displays it on-screen
+    btn1 = game.add.sprite(0, 128, 'btnc');
+    btn1.scale.setTo(1,0.75);
+    game.add.sprite(128, 128, 'btnc');
+    game.add.sprite(256, 128, 'btnc');
+
+    game.add.sprite(0, 256, 'btnc');
+    game.add.sprite(128, 256, 'btnc');
+    game.add.sprite(256, 256, 'btnc');
+
+    game.add.sprite(0, 384, 'btnc');
+    game.add.sprite(128, 384, 'btnc');
+    game.add.sprite(256, 384, 'btnc');
+
+    game.add.sprite(0, 512, 'btnc');
+    game.add.sprite(128, 512, 'btnc');
+    game.add.sprite(256, 512, 'btnc');
+}
+
+
+</script>
+
+</body>
+</html>
