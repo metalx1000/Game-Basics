@@ -67,6 +67,8 @@ var stars;
 var score = 0;
 var scoreText;
 
+var fpsText;
+
 var world_height = height;
 var world_width = 5000;
 
@@ -128,6 +130,11 @@ function create() {
     scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
     scoreText.fixedToCamera = true;//follow camera
 
+    //FPS Text
+    game.time.advancedTiming = true;//advanced timeing needs to be true to get fps
+    fpsText = game.add.text(16, height - 48, 'fps: 0', { fontSize: '32px', fill: '#000' });
+    fpsText.fixedToCamera = true;//follow camera
+
     //Control setup
     cursors = game.input.keyboard.createCursorKeys();
 
@@ -168,6 +175,9 @@ function Load_Stars(){
 }
 
 function update() {
+    //update fpsText
+    fpsText.text = "fps: " + game.time.fps;
+    console.log(game.time.fps);
 
     //Set Collisions
     game.physics.arcade.collide(player, platforms);
