@@ -13,6 +13,7 @@ http://www.photonstorm.com/phaser/tutorial-making-your-first-phaser-game
 -->
 	<meta charset="UTF-8" />
     <title>Phaser - Tutorial</title>
+        <script>var res = "../res/" </script>
 	<script type="text/javascript" src="../../../js/phaser.min.js"></script>
     <style type="text/css">
         body {
@@ -31,17 +32,17 @@ var game = new Phaser.Game(width, height, Phaser.AUTO, '', { preload: preload, c
 function preload() {
 
     //preload images
-    game.load.image('sky', '../res/sky.jpg');
-    game.load.image('ground', '../res/stone.png');
-    game.load.image('star', '../res/star.png');
-    game.load.spritesheet('dude', '../res/dude.png', 32, 48);
+    game.load.image('sky', res + 'sky.jpg');
+    game.load.image('ground', res + '/stone.png');
+    game.load.image('star', res + '/star.png');
+    game.load.spritesheet('dude', res + '/dude.png', 32, 48);
 
     //Preload Sounds
     game.load.audio('NIN', ['http://static.echonest.com/audio2/1353978910554/06 What If We Could .mp3']);
-    game.load.audio('coin', '../res/coin.wav');
-    game.load.audio('startup', '../res/startup.wav');
-    game.load.audio('jump', '../res/jump.wav');
-    game.load.audio('win', '../res/win.wav');
+    game.load.audio('coin', res + '/coin.wav');
+    game.load.audio('startup', res + '/startup.wav');
+    game.load.audio('jump', res + '/jump.wav');
+    game.load.audio('win', res + '/win.wav');
 
 }
 
@@ -54,7 +55,7 @@ var score = 0;
 var scoreText;
 
 var world_height = height;
-var world_width = 2000;
+var world_width = 5000;
 
 var numStarsStart = Math.floor(world_width / 70);
 var numStars = numStarsStart; 
@@ -87,29 +88,11 @@ function create() {
     //Enable physics for platform group
     platforms.enableBody = true;
 
-    //Create the ground.
-    for(var i = 0;i < 800;i+=128){
-        var ground = platforms.create(i, game.world.height - 64, 'ground');
-        //stops ground from moving
-        ground.body.immovable = true;
-    }
-
-
     //Create Ledges
-    Create_Ledges(400,400,400);
-    Create_Ledges(550,800,1000);
-    Create_Ledges(250,600,400);
-    Create_Ledges(250,1200,400);
-    Create_Ledges(400,1500,400);
-
-    ledge = platforms.create(0, 250, 'ground');
-    ledge.body.immovable = true;
-
-    ledge = platforms.create(600, 200, 'ground');
-    ledge.body.immovable = true;
+    Create_Ledges(550,0,world_width);//ground
 
     //The player and its settings
-    player = game.add.sprite(width * 0.5, game.world.height - 150, 'dude');
+    player = game.add.sprite(0, game.world.height - 150, 'dude');
 
     //Enable physics on the player
     game.physics.arcade.enable(player);
@@ -245,13 +228,17 @@ function collectStar (player, star) {
     //update number of stars left in scene
     numStars -= 1;
     //if all stars are collected
-    if(numStars == 0){
+    if(numStars < numStarsStart / 2){
         //play victory music
         win = game.add.audio('win');
         win.play();
-        
+        player.body.position.x = 0;
         //reload stars and continue to play
         numStars = numStarsStart;
+        
+        stars.forEach(function(s){
+            s.kill();
+        })
         Load_Stars();
     }
 
