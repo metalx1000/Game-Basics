@@ -11,7 +11,20 @@ https://github.com/metalx1000/Game-Basics
 Based on the tutorial at :
 http://www.photonstorm.com/phaser/tutorial-making-your-first-phaser-game
 -->
-	<meta charset="UTF-8" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1, IE=9">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="Phaser App">
+    <meta name="viewport" content="initial-scale=1 maximum-scale=1 user-scalable=0 minimal-ui" />
+
     <title>Phaser - Tutorial</title>
         <script>var res = "../res/" </script>
 	<script type="text/javascript" src="../../../js/phaser.min.js"></script>
@@ -25,7 +38,7 @@ http://www.photonstorm.com/phaser/tutorial-making-your-first-phaser-game
 
 <script type="text/javascript">
 var height = 600;
-var width = 800
+var width = 800;
 
 var game = new Phaser.Game(width, height, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
@@ -89,7 +102,7 @@ function create() {
     platforms.enableBody = true;
 
     //Create Ledges
-    Create_Ledges(550,0,world_width);//ground
+    Create_Ledges(height - 50,0,world_width);//ground
 
     //The player and its settings
     player = game.add.sprite(0, game.world.height - 150, 'dude');
@@ -117,6 +130,9 @@ function create() {
 
     //Control setup
     cursors = game.input.keyboard.createCursorKeys();
+
+    //Add touchscreen pointer
+    game.input.addPointer();
    
     //Go Full Screen when Game Window Clicked  
     game.input.onDown.add(gofull, this);
@@ -181,6 +197,14 @@ function update() {
         player.animations.play('right');
 
         mouseY = game.input.mousePointer.position.y;
+    }
+    else if(game.input.pointer1.isDown){
+       //  Move to the right
+        player.body.velocity.x = 150;
+        player.animations.play('right');
+
+        mouseY = game.input.mousePointer.position.y
+        gofull();
     }
     else 
     {
