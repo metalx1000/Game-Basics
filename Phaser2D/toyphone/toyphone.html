@@ -22,8 +22,9 @@
     <div id="game"></div>
     <div id="orientation"></div>
 <script>
-var game = new Phaser.Game(384, 800, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
-var btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9;
+var game = new Phaser.Game(384, 600, Phaser.CANVAS, 'Toy-Phone', { preload: preload, create: create });
+var buttons = [];
+
 function preload() {
 
     game.load.image('btnc', 'res/btnc.png');
@@ -44,27 +45,42 @@ function preload() {
 }
 
 function create() {
+    var scaley = 0.75;
 
-    //  This creates a simple sprite that is using our loaded image and
-    //  displays it on-screen
-    btn1 = game.add.sprite(0, 128, 'btnc');
-    btn1.scale.setTo(1,0.75);
-    game.add.sprite(128, 128, 'btnc');
-    game.add.sprite(256, 128, 'btnc');
+    var btn_space = 100;
+    buttons.push(game.add.sprite(0, btn_space, 'btnc'));
+    buttons[0].scale.setTo(1,scaley);
+    buttons.push(game.add.sprite(128, btn_space, 'btnc'));
+    buttons.push(game.add.sprite(256, btn_space, 'btnc'));
+    btn_space += buttons[0].height;
 
-    game.add.sprite(0, 256, 'btnc');
-    game.add.sprite(128, 256, 'btnc');
-    game.add.sprite(256, 256, 'btnc');
+    buttons.push(game.add.sprite(0, btn_space, 'btnc'));
+    buttons.push(game.add.sprite(128, btn_space, 'btnc'));
+    buttons.push(game.add.sprite(256, btn_space, 'btnc'));
 
-    game.add.sprite(0, 384, 'btnc');
-    game.add.sprite(128, 384, 'btnc');
-    game.add.sprite(256, 384, 'btnc');
+    btn_space += buttons[0].height;
 
-    game.add.sprite(0, 512, 'btnc');
-    game.add.sprite(128, 512, 'btnc');
-    game.add.sprite(256, 512, 'btnc');
+    buttons.push(game.add.sprite(0, btn_space, 'btnc'));
+    buttons.push(game.add.sprite(128, btn_space, 'btnc'));
+    buttons.push(game.add.sprite(256, btn_space, 'btnc'));
+
+    btn_space += buttons[0].height;
+
+    buttons.push(game.add.sprite(0, btn_space, 'btnc'));
+    buttons.push(game.add.sprite(128, btn_space, 'btnc'));
+    buttons.push(game.add.sprite(256, btn_space, 'btnc'));
+
+    for(var i = 0;i < buttons.length;i++){
+        buttons[i].scale.setTo(1,scaley);
+        buttons[i].inputEnabled = true;
+        buttons[i].events.onInputDown.add(click, this);
+    }
 }
 
+
+function click(btn){
+    console.log(btn.z)
+};
 
 </script>
 
