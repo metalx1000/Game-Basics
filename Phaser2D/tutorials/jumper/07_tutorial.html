@@ -14,7 +14,7 @@ http://www.photonstorm.com/phaser/tutorial-making-your-first-phaser-game
 -->
 	<meta charset="UTF-8" />
     <title>Phaser - Tutorial</title>
-	<script type="text/javascript" src="../../js/phaser.min.js"></script>
+	<script type="text/javascript" src="../../js/phaser.js"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -26,7 +26,6 @@ http://www.photonstorm.com/phaser/tutorial-making-your-first-phaser-game
 <script type="text/javascript">
 var height = 600;
 var width = 800
-
 var game = new Phaser.Game(width, height, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 function preload() {
@@ -38,7 +37,7 @@ function preload() {
     game.load.spritesheet('dude', 'res/dude.png', 32, 48);
 
     //Preload Sounds
-    game.load.audio('NIN', ['http://static.echonest.com/audio2/1353978910554/06 What If We Could .mp3']);
+    //game.load.audio('NIN', ['http://static.echonest.com/audio2/1353978910554/06 What If We Could .mp3']);
     game.load.audio('coin', 'res/coin.wav');
     game.load.audio('startup', 'res/startup.wav');
     game.load.audio('jump', 'res/jump.wav');
@@ -51,7 +50,6 @@ var platforms;
 var cursors;
 
 var pad1;
-var indicator;
 
 var stars;
 var score = 0;
@@ -63,7 +61,14 @@ var world_width = 2000;
 var numStarsStart = Math.floor(world_width / 70);
 var numStars = numStarsStart; 
 
+
+
 function create() {
+
+    game.input.gamepad.start();
+
+    // To listen to buttons from a specific pad listen directly on that pad game.input.gamepad.padX, where X = pad 1-4
+    pad1 = game.input.gamepad.pad1;
 
     //Enable the Physics 
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -75,8 +80,8 @@ function create() {
     game.add.tileSprite(0, 0, world_width, world_height, 'sky');
 
     //load music
-    music = game.add.audio('NIN');
-    music.play('',0,1,true);
+    //music = game.add.audio('NIN');
+    //music.play('',0,1,true);
 
     //load startup sound and play it
     startup = game.add.audio('startup');
@@ -140,10 +145,6 @@ function create() {
     game.input.onDown.add(gofull, this);
 
 
-    game.input.gamepad.start();
-
-    // To listen to buttons from a specific pad listen directly on that pad game.input.gamepad.padX, where X = pad 1-4
-    pad1 = game.input.gamepad.pad1;
 }
 
 function Create_Ledges(top,left, length){
@@ -236,20 +237,27 @@ function update() {
     }
     
     //  Allow the player to jump if they are touching the ground.
-    if (cursors.up.isDown 
-    || pad1._rawPad.buttons[0].pressed == true
-    || pad1._rawPad.buttons[1].pressed == true
-    || pad1._rawPad.buttons[2].pressed == true
-    || pad1._rawPad.buttons[3].pressed == true
-    || pad1._rawPad.buttons[4].pressed == true
-    || pad1._rawPad.buttons[5].pressed == true)
-    {
+    if (cursors.up.isDown){
         //if player is on ground
         if(player.body.touching.down){
             player_jump();
         }
     }
 
+    if(pad1.connected){
+        if(pad1._buttons[0].isDown == true
+        || pad1._rawPad.buttons[1].pressed == true
+        || pad1._rawPad.buttons[2].pressed == true
+        || pad1._rawPad.buttons[3].pressed == true
+        || pad1._rawPad.buttons[4].pressed == true
+        || pad1._rawPad.buttons[5].pressed == true)
+        {
+            //if player is on ground
+            if(player.body.touching.down){
+                player_jump();
+            }
+        }
+    }
 
 }
 
