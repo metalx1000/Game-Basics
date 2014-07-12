@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head> 
+<!--
+Created with xcf2phaser
+http://filmsbykris.com
+
+code can be found at:
+https://github.com/metalx1000/Game-Basics
+
+-->
+    <meta charset="UTF-8" />
+    <title>Phaser - Game</title>
+    <script type="text/javascript" src="js/phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+var height = 600;
+var width = 800
+
+var game = new Phaser.Game(width, height, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+function preload() {
+
+
