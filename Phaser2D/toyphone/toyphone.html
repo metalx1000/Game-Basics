@@ -22,9 +22,12 @@
     <div id="game"></div>
     <div id="orientation"></div>
 <script>
-var game = new Phaser.Game(384, 600, Phaser.CANVAS, 'Toy-Phone', { preload: preload, create: create});
+var height = 600;
+var width = 384;
+
+var game = new Phaser.Game(width, height, Phaser.CANVAS, 'Toy-Phone', { preload: preload, create: create});
 var buttons = [];
-var call_num;
+var call_num, call;
 
 function preload() {
     game.load.image('btnc', 'res/btnc.png');
@@ -68,7 +71,15 @@ function create() {
             btn_space+=buttons[i].height;
         }
     }
-    
+
+    //create send button
+    call = game.add.sprite(0,height-110, 'btnc');
+    call.scale.setTo(3,.8);
+    call.text = game.add.text(game.world.centerX - 80, height-95, "CALL", style);
+    call.inputEnabled = true;
+    call.events.onInputDown.add(make_call, this);
+
+    //create call display    
     call_num = game.add.text(0, 0, " ", style);    
 }
 
