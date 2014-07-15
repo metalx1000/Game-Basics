@@ -29,11 +29,26 @@ var game = new Phaser.Game(width, height, Phaser.CANVAS, 'Toy-Phone', { preload:
 var buttons = [];
 var call_num, call;
 
+var call_rec;
+
 function preload() {
     game.load.image('btnc', 'res/btnc.png');
+
+
+    //tone sounds
+    for(var i = 0;i <12;i++){
+        game.load.audio('tone_' + i, 'res/tones/' + i + '.wav');
+    }
+
+    //calls
+    for(var x = 0;x<=3;x++){
+        game.load.audio('call_rec' + x, 'res/calls/' + x + '.wav');
+    }
 }
 
 function create() {
+
+    call_rec = game.add.audio('call_rec');
 
     var style = { font: "65px Arial", fill: "#ff0044", align: "center" };
 
@@ -86,6 +101,8 @@ function create() {
 
 function click(btn){
     call_num.text += btn.num_val;
+    var tone = game.add.audio('tone_' + btn.num_val);
+    tone.play('',0,1,false);
     if(call_num.text.length > 9){
         call_num.text = " "
         make_call();
@@ -93,7 +110,11 @@ function click(btn){
 };
 
 function make_call(){
-    console.log("Placing Call...");
+    call_rec.pause();
+    var x = Math.floor(Math.random() * 3) + 1
+    console.log("Placing Call #" + x + "...");
+    call_rec = game.add.audio('call_rec' + x);
+    call_rec.play('',0,1,false);
 }
 
 </script>
