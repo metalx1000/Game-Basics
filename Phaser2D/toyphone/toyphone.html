@@ -97,12 +97,12 @@ function create() {
     //create call display    
     call_num = game.add.text(0, 0, " ", style);    
 
+    game.input.onDown.add(gofull, this);
 }
 
 
 function click(btn){
     
-    gofull();
     call_num.text += btn.num_val;
     var tone = game.add.audio('tone_' + btn.num_val);
     tone.play('',0,1,false);
