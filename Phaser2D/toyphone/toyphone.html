@@ -96,10 +96,13 @@ function create() {
 
     //create call display    
     call_num = game.add.text(0, 0, " ", style);    
+
 }
 
 
 function click(btn){
+    
+    gofull();
     call_num.text += btn.num_val;
     var tone = game.add.audio('tone_' + btn.num_val);
     tone.play('',0,1,false);
@@ -117,6 +120,11 @@ function make_call(){
     call_rec.play('',0,1,false);
 }
 
+function gofull(){
+    //Set the game to strech and fill the screen
+    game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
+    game.scale.startFullScreen();
+}
 </script>
 
 </body>
