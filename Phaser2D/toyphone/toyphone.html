@@ -22,65 +22,68 @@
     <div id="game"></div>
     <div id="orientation"></div>
 <script>
-var game = new Phaser.Game(384, 600, Phaser.CANVAS, 'Toy-Phone', { preload: preload, create: create });
+var game = new Phaser.Game(384, 600, Phaser.CANVAS, 'Toy-Phone', { preload: preload, create: create});
 var buttons = [];
+var call_num;
 
 function preload() {
-
     game.load.image('btnc', 'res/btnc.png');
-/*
-    game.load.image('btn0', 'res/btn0.png');
-    game.load.image('btn1', 'res/btn1.png');
-    game.load.image('btn2', 'res/btn2.png');
-    game.load.image('btn3', 'res/btn3.png');
-    game.load.image('btn4', 'res/btn4.png');
-    game.load.image('btn5', 'res/btn5.png');
-    game.load.image('btn6', 'res/btn6.png');
-    game.load.image('btn7', 'res/btn7.png');
-    game.load.image('btn8', 'res/btn8.png');
-    game.load.image('btn9', 'res/btn9.png');
-    game.load.image('btn10', 'res/btnpound.png');
-    game.load.image('btn11', 'res/btnstar.png');
-*/
 }
 
 function create() {
+
+    var style = { font: "65px Arial", fill: "#ff0044", align: "center" };
+
     var scaley = 0.75;
 
     var btn_space = 100;
-    buttons.push(game.add.sprite(0, btn_space, 'btnc'));
-    buttons[0].scale.setTo(1,scaley);
-    buttons.push(game.add.sprite(128, btn_space, 'btnc'));
-    buttons.push(game.add.sprite(256, btn_space, 'btnc'));
-    btn_space += buttons[0].height;
-
-    buttons.push(game.add.sprite(0, btn_space, 'btnc'));
-    buttons.push(game.add.sprite(128, btn_space, 'btnc'));
-    buttons.push(game.add.sprite(256, btn_space, 'btnc'));
-
-    btn_space += buttons[0].height;
-
-    buttons.push(game.add.sprite(0, btn_space, 'btnc'));
-    buttons.push(game.add.sprite(128, btn_space, 'btnc'));
-    buttons.push(game.add.sprite(256, btn_space, 'btnc'));
-
-    btn_space += buttons[0].height;
-
-    buttons.push(game.add.sprite(0, btn_space, 'btnc'));
-    buttons.push(game.add.sprite(128, btn_space, 'btnc'));
-    buttons.push(game.add.sprite(256, btn_space, 'btnc'));
-
-    for(var i = 0;i < buttons.length;i++){
+    var btn_v = 0;
+    for(var i = 0;i < 12;i++){
+        buttons.push(game.add.sprite(btn_v, btn_space, 'btnc'));
         buttons[i].scale.setTo(1,scaley);
+
         buttons[i].inputEnabled = true;
         buttons[i].events.onInputDown.add(click, this);
+
+        var textX = buttons[i].position.x + buttons[i].width / 3;
+        var textY = buttons[i].position.y + buttons[i].height / 6;
+
+        if(i < 9){
+            buttons[i].num_val = i+1;
+            buttons[i].text = game.add.text(textX, textY, i+1, style);
+        }else if(i == 9){
+            buttons[i].num_val = "*";
+            buttons[i].text = game.add.text(textX, textY, "*", style);
+        }else if(i == 10){
+            buttons[i].num_val = "0";
+            buttons[i].text = game.add.text(textX, textY, "0", style);
+        }else if(i == 11){
+            buttons[i].num_val = "#";
+            buttons[i].text = game.add.text(textX, textY, "#", style);
+        }
+
+        btn_v += 128;
+        if(btn_v > 256){
+            btn_v=0;
+            btn_space+=buttons[i].height;
+        }
     }
+    
+    call_num = game.add.text(0, 0, " ", style);    
 }
 
 
 function click(btn){
-    console.log(btn.z)
+    call_num.text += btn.num_val;
+    if(call_num.text.length > 9){
+        call_num.text = " "
+        make_call();
+    }
 };
+
+function make_call(){
+    console.log("Placing Call...");
+}
 
 </script>
 
