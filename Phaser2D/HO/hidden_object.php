@@ -7,8 +7,8 @@
     </style>
 <!--    <script src="ho.js"></script>-->
     <script type="text/javascript">
-        var height = 768;
-        var width = 1366;
+        var height = 720;
+        var width = 1280;
         var group;
         var items_total;
 
@@ -26,6 +26,7 @@
         function preload() {
             //images
             game.load.image("BG", "res/bg.png");
+            game.load.image("WIN", "res/win.png");
 
             //items
             for(var i = 0;i<obj.obj.length;i++){
@@ -59,7 +60,7 @@
 
             items_total = items.length;
             //Go Full Screen when Game Window Clicked  
-            //game.input.onDown.add(gofull, this);
+            game.input.onDown.add(gofull, this);
             
         }
 
@@ -74,7 +75,8 @@
             if(items_total == 0){
                 win = game.add.audio('win');
                 win.play();
-
+                var win_text = game.add.sprite(width/2-200,height/2-200, 'WIN');
+                win_text.scale.setTo(2, 2);
                 console.log("you win");
             }
         }
