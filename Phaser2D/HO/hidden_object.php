@@ -34,6 +34,7 @@
 
             //sounds
             game.load.audio('chime', 'res/chime.wav');
+            game.load.audio('win', 'res/win.wav');
         }
         
         // THE GAME HAS BEEN CREATED
@@ -71,6 +72,9 @@
             
             items_total -= 1;
             if(items_total == 0){
+                win = game.add.audio('win');
+                win.play();
+
                 console.log("you win");
             }
         }
