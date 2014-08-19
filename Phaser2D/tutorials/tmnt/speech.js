@@ -53,11 +53,14 @@
                     //$('#transcript').html(final_transcript);
                     console.log("jumping");
                     player_jump();
-                }else if(check.indexOf("back") > -1) {
+                }
+                if(check.indexOf("back") > -1 || check.indexOf("left") > -1) {
                     movement="back";
-                }else if(check.indexOf("forward") > -1) {
+                }
+                if(check.indexOf("forward") > -1 || check.indexOf("right") > -1) {
                     movement="forward";
-                }else if(check.indexOf("stop") > -1) {
+                }
+                if(check.indexOf("stop") > -1) {
                     movement="stop";
                 }
 
