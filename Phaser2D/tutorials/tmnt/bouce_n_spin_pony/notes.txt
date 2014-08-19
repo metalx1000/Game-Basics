@@ -1,0 +1,12 @@
+move_mouse.html is designed to have the player move and collect stars when ever the mouse is moved.
+It ment to be used with a Wii controller and the IR leds on the "Fisher-Price Laugh & Learn Smart Bounce & Spin Pony"
+http://www.amazon.com/Fisher-Price-Laugh-Learn-Smart-Bounce/dp/B0015UUW0M
+
+Allowing for a child to play new games on a computer with Bluetooth and a Wii controller and controlling the player with the child's movements.
+
+Linux setup (debian):
+sudo aptitude install bluetooth lswm wmgui wminput
+modify '/etc/cwiid/wminput/ir_ptr' and remove the '~' before ABS_X and ABS_Y
+then connect to wii mote with 'sudo wminput -c ir_ptr'
+
+

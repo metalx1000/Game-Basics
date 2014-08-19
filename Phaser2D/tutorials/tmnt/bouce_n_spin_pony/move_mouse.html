@@ -1,0 +1,286 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+<!--
+Created by Kris Occhipinti
+http://filmsbykris.com
+
+code can be found at:
+https://github.com/metalx1000/Game-Basics
+
+Based on the tutorial at :
+http://www.photonstorm.com/phaser/tutorial-making-your-first-phaser-game
+-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1, IE=9">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="Phaser App">
+    <meta name="viewport" content="initial-scale=1 maximum-scale=1 user-scalable=0 minimal-ui" />
+
+    <title>Phaser - Tutorial</title>
+        <script>var res = "../res/" </script>
+	<script type="text/javascript" src="../../../js/phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+var height = 600;
+var width = 800;
+
+var game = new Phaser.Game(width, height, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+function preload() {
+
+    //preload images
+    game.load.image('sky', res + 'sky.jpg');
+    game.load.image('ground', res + '/stone.png');
+    game.load.image('star', res + '/star.png');
+    game.load.spritesheet('dude', res + '/dude.png', 32, 48);
+
+    //Preload Sounds
+    game.load.audio('NIN', ['http://static.echonest.com/audio2/1353978910554/06 What If We Could .mp3']);
+    game.load.audio('coin', res + '/coin.wav');
+    game.load.audio('startup', res + '/startup.wav');
+    game.load.audio('jump', res + '/jump.wav');
+    game.load.audio('win', res + '/win.wav');
+
+}
+
+var player;
+var platforms;
+var cursors;
+
+var stars;
+var score = 0;
+var scoreText;
+
+var fpsText;
+
+var world_height = height;
+var world_width = 5000;
+
+var numStarsStart = Math.floor(world_width / 70);
+var numStars = numStarsStart; 
+
+var mouseY;
+function create() {
+
+    //Enable the Physics 
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    //set world size
+    game.world.setBounds(0, 0, world_width, world_height);
+
+    //get and store mouse position Y
+    mouseY = game.input.mousePointer.position.x;
+    //Load background
+    game.add.tileSprite(0, 0, world_width, world_height, 'sky');
+
+    //load music
+    music = game.add.audio('NIN');
+    music.play('',0,1,true);
+
+    //load startup sound and play it
+    startup = game.add.audio('startup');
+    startup.play();
+
+    //platforms group 
+    platforms = game.add.group();
+
+    //Enable physics for platform group
+    platforms.enableBody = true;
+
+    //Create Ledges
+    Create_Ledges(height - 50,0,world_width);//ground
+
+    //The player and its settings
+    player = game.add.sprite(0, game.world.height - 150, 'dude');
+
+    //Enable physics on the player
+    game.physics.arcade.enable(player);
+
+    //Player physics properties
+    player.body.bounce.y = 0.2;
+    player.body.gravity.y = 300;
+    player.body.collideWorldBounds = true;
+
+    //animations
+    player.animations.add('left', [0, 1, 2, 3], 10, true);
+    player.animations.add('right', [5, 6, 7, 8], 10, true);
+
+    //Create stars to collect
+    stars = game.add.group();
+    stars.enableBody = true;
+    Load_Stars();
+
+    //Score Text
+    scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    scoreText.fixedToCamera = true;//follow camera
+
+    //FPS Text
+    game.time.advancedTiming = true;//advanced timeing needs to be true to get fps
+    fpsText = game.add.text(16, height - 48, 'fps: 0', { fontSize: '32px', fill: '#000' });
+    fpsText.fixedToCamera = true;//follow camera
+
+    //Control setup
+    cursors = game.input.keyboard.createCursorKeys();
+
+    //Add touchscreen pointer
+    game.input.addPointer();
+   
+    //Go Full Screen when Game Window Clicked  
+    game.input.onDown.add(gofull, this);
+}
+
+function Create_Ledges(top,left, length){
+    //Create Ledges
+    length = left + length
+    for(var i = left;i < length;i += 64){
+        var ledge = platforms.create(i, top, 'ground');
+        ledge.scale.setTo(0.5,0.5);
+        ledge.body.immovable = true;
+    }
+
+}
+function gofull(){
+    //Set the game to strech and fill the screen
+    game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
+    game.scale.startFullScreen();
+}
+
+function Load_Stars(){
+    //Create stars and spaced them apart
+    for (var i = 0; i < numStars; i++)
+    {
+        //Create a star 
+        var star = stars.create(i * 70, 0, 'star');
+        //Add gravity
+        star.body.gravity.y = 300;
+        //Give Star random bounce value
+        star.body.bounce.y = 0.7 + Math.random() * 0.2;
+    }
+}
+
+function update() {
+    //update fpsText
+    fpsText.text = "fps: " + game.time.fps;
+    //console.log(game.time.fps);
+
+    var mDiff = Math.abs(mouseY - game.input.mousePointer.position.y);
+    console.log(mDiff);
+    //Set Collisions
+    game.physics.arcade.collide(player, platforms);
+    game.physics.arcade.collide(stars, platforms);
+
+    //If Player touches star, run function "collectStar,"  
+    game.physics.arcade.overlap(player, stars, collectStar, null, this);
+
+    if (cursors.left.isDown)
+    {
+        //  Move to the left
+        player.body.velocity.x = -150;
+        player.animations.play('left');
+
+    }
+    else if (cursors.right.isDown)
+    {
+        //  Move to the right
+        player.body.velocity.x = 150;
+        player.animations.play('right');
+
+        //game.camera.x += camSpeed;
+    }
+    else if(mDiff > 20){
+       //  Move to the right
+        player.body.velocity.x = 150;
+        player.animations.play('right');
+
+        mouseY = game.input.mousePointer.position.y;
+    }
+    else if(game.input.pointer1.isDown){
+       //  Move to the right
+        player.body.velocity.x = 150;
+        player.animations.play('right');
+
+        mouseY = game.input.mousePointer.position.y
+        gofull();
+    }
+    else 
+    {
+        //  Stand still
+
+        //player.frame = 4;
+        //Reset the players velocity 
+        if(player.body.velocity.x > 0){
+            player.body.velocity.x -= 1;
+            player.animations.play('right');
+        }else{
+            player.body.velocity.x = 0;
+            player.animations.stop();
+        }
+
+    }
+    
+    game.camera.x = player.position.x - width * 0.5;
+
+    //  Allow the player to jump if they are touching the ground.
+    if (cursors.up.isDown && player.body.touching.down)
+    {
+        jump = game.add.audio('jump');
+        jump.play();
+
+        player.body.velocity.y = -350;
+    }
+
+
+}
+
+function collectStar (player, star) {
+    
+    //Removes the star from the screen
+    star.kill();
+
+    //Add and update the score
+    score += 10;
+    scoreText.text = 'Score: ' + score;
+
+    //play coin sound
+    coin = game.add.audio('coin');
+    coin.play();
+
+    //update number of stars left in scene
+    numStars -= 1;
+    //if all stars are collected
+    if(numStars < numStarsStart / 2){
+        //play victory music
+        win = game.add.audio('win');
+        win.play();
+        player.body.position.x = 0;
+        //reload stars and continue to play
+        numStars = numStarsStart;
+        
+        stars.forEach(function(s){
+            s.kill();
+        })
+        Load_Stars();
+    }
+
+}
+
+</script>
+
+</body>
+</html>
