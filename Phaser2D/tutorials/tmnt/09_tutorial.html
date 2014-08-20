@@ -1,0 +1,338 @@
+<!doctype html> 
+<!--Add Game Pad controls-->
+<html lang="en"> 
+<head> 
+<!--
+Created by Kris Occhipinti
+http://filmsbykris.com
+
+code can be found at:
+https://github.com/metalx1000/Game-Basics
+
+Based on the tutorial at :
+http://www.photonstorm.com/phaser/tutorial-making-your-first-phaser-game
+-->
+	<meta charset="UTF-8" />
+    <title>Phaser - Tutorial</title>
+	<script type="text/javascript" src="../../js/phaser.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+	<script type="text/javascript" src="speech.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+var height = 600;
+var width = 800
+var game = new Phaser.Game(width, height, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+function preload() {
+
+    //preload images
+    game.load.image('sky', 'res/sky.jpg');
+    game.load.image('ground', 'res/stone.png');
+    game.load.image('pizza', 'res/pizza12.png');
+    game.load.image('btnJump', 'res/btnJump.png');
+    game.load.spritesheet('turtle', 'res/turtle.png', 48, 48);
+
+    //Preload Sounds
+    //Music by http://ozzed.net/
+    game.load.audio('Music1', ['res/music.mp3']);
+    game.load.audio('coin', 'res/coin.wav');
+    game.load.audio('startup', 'res/cow.mp3');
+    game.load.audio('jump', 'res/jump.wav');
+    game.load.audio('win', 'res/win.mp3');
+
+}
+
+var player;
+var platforms;
+var cursors;
+
+var paused = false;
+var pad1;
+
+var pizzas;
+var score = 0;
+var scoreText;
+var time = 60;
+var timeText;
+
+var world_height = height;
+var world_width = 2000;
+
+var PizzaDiv = 300;
+var numPizzaStart = Math.floor(world_width / PizzaDiv);
+var numPizza = numPizzaStart; 
+
+
+
+function create() {
+    game.input.gamepad.start();
+
+    // To listen to buttons from a specific pad listen directly on that pad game.input.gamepad.padX, where X = pad 1-4
+    pad1 = game.input.gamepad.pad1;
+
+    //Enable the Physics 
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    //set world size
+    game.world.setBounds(0, 0, world_width, world_height);
+
+    //Load background
+    game.add.tileSprite(0, 0, world_width, world_height, 'sky');
+
+    //load music
+    music = game.add.audio('Music1');
+    music.play('',0,1,true);
+
+    //load startup sound and play it
+    startup = game.add.audio('startup');
+    startup.play();
+
+    //platforms group 
+    platforms = game.add.group();
+
+    //Enable physics for platform group
+    platforms.enableBody = true;
+
+    //Create the ground.
+    for(var i = 0;i < 800;i+=128){
+        var ground = platforms.create(i, game.world.height - 64, 'ground');
+        //stops ground from moving
+        ground.body.immovable = true;
+    }
+
+
+    //Create Ledges
+    Create_Ledges(400,400,400);
+    Create_Ledges(350,800,1500);
+    Create_Ledges(150,600,400);
+    Create_Ledges(250,1200,400);
+    Create_Ledges(600,1500,400);
+
+    ledge = platforms.create(0, 250, 'ground');
+    ledge.body.immovable = true;
+
+    ledge = platforms.create(400,400, 'ground');
+
+    ledge.body.immovable = true;
+
+    //The player and its settings
+    player = game.add.sprite(width * 0.5, game.world.height - 350, 'turtle');
+    player.scale.setTo(2,2);
+    //Enable physics on the player
+    game.physics.arcade.enable(player);
+
+    //Player physics properties
+    player.body.bounce.y = 0.2;
+    player.body.gravity.y = 500;
+    player.body.collideWorldBounds = true;
+
+    //animations
+    player.animations.add('left', [0, 1, 2, 3], 10, true);
+    player.animations.add('right', [5, 6, 7, 8], 10, true);
+
+    //Create pizzas to collect
+    pizzas = game.add.group();
+    pizzas.enableBody = true;
+    Load_Pizza();
+
+    //Score Text
+    scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    scoreText.fixedToCamera = true;//follow camera
+
+    //Time Text
+    timeText = game.add.text(16, 48, 'time: 0', { fontSize: '32px', fill: '#000' });
+    timeText.fixedToCamera = true;//follow camera
+
+    //Control setup
+    cursors = game.input.keyboard.createCursorKeys();
+   
+    //Go Full Screen when Game Window Clicked  
+    game.input.onDown.add(gofull, this);
+
+
+    // create our virtual game controller buttons 
+    buttonjump = game.add.button(600, 500, 'btnJump', null, this, 0, 1, 0, 1);  //game, x, y, key, callback, callbackContext, overFrame, outFrame, downFrame, upFrame
+    buttonjump.fixedToCamera = true;  //our buttons should stay on the same place  
+    buttonjump.events.onInputOver.add(function(){player_jump()});
+//    buttonjump.events.onInputOut.add(function(){jump=false;});
+    buttonjump.events.onInputDown.add(function(){player_jump()});
+//    buttonjump.events.onInputUp.add(function(){jump=false;});
+
+    
+    //load_speech_btn();
+}
+
+function Create_Ledges(top,left, length){
+    //Create Ledges
+    length = left + length
+    for(var i = left;i < length;i += 64){
+        var ledge = platforms.create(i, top, 'ground');
+        ledge.scale.setTo(0.5,0.5);
+        ledge.body.immovable = true;
+    }
+
+}
+function gofull(){
+    //Set the game to strech and fill the screen
+    game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
+    game.scale.startFullScreen();
+}
+
+function Load_Pizza(){
+    //Create pizzas and spaced them apart
+    for (var i = 0; i < numPizza; i++)
+    {
+        //Create a pizza 
+        var pizza = pizzas.create(i * PizzaDiv, 0, 'pizza');
+        pizza.scale.setTo(0.5,0.5);
+        //Add gravity
+        pizza.body.gravity.y = 300;
+        //Give Star random bounce value
+        pizza.body.bounce.y = 0.1;
+    }
+}
+
+function player_left(){
+        //  Move to the left
+        player.body.velocity.x = -150;
+        player.animations.play('left');
+
+        game.camera.x = player.position.x - width * 0.5;
+}
+
+function player_right(){
+        //  Move to the right
+        player.body.velocity.x = 150;
+        player.animations.play('right');
+
+        game.camera.x = player.position.x - width * 0.5;
+        //game.camera.x += camSpeed;
+
+}
+
+function player_jump(){
+        if(player.body.touching.down){
+            jump = game.add.audio('jump');
+            jump.play();
+
+            player.body.velocity.y = -550;
+        }
+}
+
+function update() {
+  if(!paused){
+    //Set Collisions
+    //only collide on fall. 
+    //Allow player to jump through planes and still land on them
+    if(player.body.velocity.y > -50){game.physics.arcade.collide(player, platforms);}
+    game.physics.arcade.collide(pizzas, platforms);
+
+    //If Player touches pizza, run function "collectStar,"  
+    game.physics.arcade.overlap(player, pizzas, collectStar, null, this);
+
+    //Reset the players velocity 
+    player.body.velocity.x = 0;
+
+    if (cursors.left.isDown 
+    || pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) 
+    || pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1
+    || movement=="back"
+    )
+    {
+        //  Move to the left
+        player_left();
+    }
+    else if (cursors.right.isDown 
+    || pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) 
+    || pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1
+    || movement=="forward" || movement=="right"
+    )
+    
+    {
+        //  Move to the right
+        player_right();
+    }
+    else
+    {
+        //  Stand still
+        player.animations.stop();
+
+        player.frame = 4;
+    }
+    
+    //  Allow the player to jump if they are touching the ground.
+    if (cursors.up.isDown){
+        //if player is on ground
+        player_jump();
+    }
+
+    if(pad1.connected){
+        if(pad1._buttons[0].isDown == true
+        || pad1._rawPad.buttons[1].pressed == true
+        || pad1._rawPad.buttons[2].pressed == true
+        || pad1._rawPad.buttons[3].pressed == true
+        || pad1._rawPad.buttons[4].pressed == true
+        || pad1._rawPad.buttons[5].pressed == true)
+        {
+            //if player is on ground
+            player_jump();
+        }
+    }
+
+  }
+}
+
+function collectStar (player, pizza) {
+    
+    //Removes the pizza from the screen
+    pizza.kill();
+
+    //Add and update the score
+    score += 10;
+    scoreText.text = 'Score: ' + score;
+
+    //play coin sound
+    coin = game.add.audio('coin');
+    coin.play();
+
+    //update number of pizzas left in scene
+    numPizza -= 1;
+    //if all pizzas are collected
+    if(numPizza == 0){
+        //play victory music
+        win = game.add.audio('win');
+        win.play();
+        
+        //reload pizzas and continue to play
+        numPizza = numPizzaStart;
+        Load_Pizza();
+    }
+
+}
+
+
+var main_timer = setInterval(function(){
+    time-=1;
+    timeText.text = "Time: " + time;
+    if(time<1){
+        var endText = game.add.text(width/2-50,height/2, 'Level Complete', { fontSize: '64px', fill: '#000' });
+        endText.fixedToCamera = true;
+        clearInterval(main_timer);
+        paused = "True";
+        music.stop();
+        startup.play();
+    }
+},1000);
+
+</script>
+
+
+</body>
+</html>
