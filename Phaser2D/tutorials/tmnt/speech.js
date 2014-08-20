@@ -63,8 +63,6 @@
                 if(check.indexOf("stop") > -1) {
                     movement="stop";
                 }
-
-
             };
 
 
