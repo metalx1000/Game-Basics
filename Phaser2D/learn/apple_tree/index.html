@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+    <script src="js/phaser.js"></script>
+    <style>
+        body{margin:0}
+    </style>
+<!--    <script src="ho.js"></script>-->
+    <script type="text/javascript">
+        var height = 700;
+        var width = 500;
+        var tree;
+        var apple_num = 0;
+        var max_apples = 10;
+
+        var game = new Phaser.Game(width, height, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+        function preload() {
+            game.load.image("tree", "res/tree.png");
+            game.load.image("apple", "res/apple.png");
+        }
+
+        function create() {
+            game.stage.backgroundColor = '#008aff';             
+
+            tree = game.add.sprite(0, 0, 'tree');
+            tree.position.y = height - tree.height;
+
+            apples = game.add.group();
+            //game.physics.startSystem(Phaser.Physics.ARCADE);
+            game.input.onDown.add(click, this);
+        }
+
+        function update(){
+
+        }
+
+        function click(){
+            //console.log(game.input.x + ":" + game.input.y);
+            var x = game.input.x;
+            var y = game.input.y;
+
+            if(x > 50 && x < 450 && y > 190 && y < 450){
+                apple_num += 1;
+                //var apple = game.add.sprite(x-28, y-28, 'apple');
+                var apple = apples.create(x-28, y-28, 'apple');
+                apple.name = 'apple' + apple_num;
+                apple.scale.setTo(.4,.4);
+//                apple.body.gravity.set(0, 180);
+//                apple.body.bounce.set(0.8);
+//                apple.enableBody = true;
+                //console.log("Apple!");
+                if(apple_num == 10){
+                    console.log("10 apples");
+                    for(var i = 0;i < 10;i++){
+                        var app = apples.children[i];
+                        game.physics.arcade.enable(app);
+                        app.body.gravity.set(0, 180);
+                        app.body.bounce.set(0.8);
+                        app.enableBody = true;
+                    }
+                }
+            }
+            //Set the game to strech and fill the screen
+            //game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
+            game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+            game.scale.startFullScreen();
+        }
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>
