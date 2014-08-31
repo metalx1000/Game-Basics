@@ -65,7 +65,7 @@
                 if(apple_num == 10){
                     apple_num = 0;
                     console.log("10 apples");
-                    for(var i = 0;i < 10;i++){
+                    for(var i = 0;i < apples.children.length;i++){
                         var app = apples.children[i];
                         game.physics.arcade.enable(app);
                         app.body.gravity.set(0, 180);
@@ -73,6 +73,13 @@
                         app.enableBody = true;
                         app.body.collideWorldBounds = true;
                     }
+
+                    setTimeout(function(){
+                        for(var i = 0;i < apples.children.length;i++){
+                            var app = apples.children[i];
+                            app.kill();
+                        }
+                    },5000);
                 }
             }
             //Set the game to strech and fill the screen
