@@ -12,12 +12,24 @@
         var tree;
         var apple_num = 0;
         var max_apples = 10;
-
+        var apple_audio;
+    
         var game = new Phaser.Game(width, height, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
         function preload() {
             game.load.image("tree", "res/tree.png");
             game.load.image("apple", "res/apple.png");
+
+            game.load.audio('1_red_apples', ['res/audio/apples/01_red_apple.mp3','res/audio/apples/01_red_apple.ogg']);
+            game.load.audio('2_red_apples', ['res/audio/apples/02_red_apples.mp3','res/audio/apples/02_red_apples.ogg']);
+            game.load.audio('3_red_apples', ['res/audio/apples/03_red_apples.mp3','res/audio/apples/03_red_apples.ogg']);
+            game.load.audio('4_red_apples', ['res/audio/apples/04_red_apples.mp3','res/audio/apples/04_red_apples.ogg']);
+            game.load.audio('5_red_apples', ['res/audio/apples/05_red_apples.mp3','res/audio/apples/05_red_apples.ogg']);
+            game.load.audio('6_red_apples', ['res/audio/apples/06_red_apples.mp3','res/audio/apples/06_red_apples.ogg']);
+            game.load.audio('7_red_apples', ['res/audio/apples/07_red_apples.mp3','res/audio/apples/07_red_apples.ogg']);
+            game.load.audio('8_red_apples', ['res/audio/apples/08_red_apples.mp3','res/audio/apples/08_red_apples.ogg']);
+            game.load.audio('9_red_apples', ['res/audio/apples/09_red_apples.mp3','res/audio/apples/09_red_apples.ogg']);
+            game.load.audio('10_red_apples', ['res/audio/apples/10_red_apples.mp3','res/audio/apples/10_red_apples.ogg']);
         }
 
         function create() {
@@ -46,11 +58,12 @@
                 var apple = apples.create(x-28, y-28, 'apple');
                 apple.name = 'apple' + apple_num;
                 apple.scale.setTo(.4,.4);
-//                apple.body.gravity.set(0, 180);
-//                apple.body.bounce.set(0.8);
-//                apple.enableBody = true;
-                //console.log("Apple!");
+
+                apple_audio = game.add.audio(apple_num + '_red_apples');
+                apple_audio.play();
+
                 if(apple_num == 10){
+                    apple_num = 0;
                     console.log("10 apples");
                     for(var i = 0;i < 10;i++){
                         var app = apples.children[i];
