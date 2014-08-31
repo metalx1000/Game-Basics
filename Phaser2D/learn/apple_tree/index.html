@@ -74,7 +74,7 @@
             var y = game.input.y;
 
             //apples
-            if(x > 50 && x < 450 && y > 190 && y < 450){
+            if(x > 50 && x < 450 && y > 190 && y < 450 && apple_num < max_apples){
                 apple_num += 1;
                 //var apple = game.add.sprite(x-28, y-28, 'apple');
                 var apple = apples.create(x-28, y-28, 'apple');
@@ -85,7 +85,6 @@
                 apple_audio.play();
 
                 if(apple_num == max_apples){
-                    apple_num = 0;
                     for(var i = 0;i < apples.children.length;i++){
                         var app = apples.children[i];
                         game.physics.arcade.enable(app);
@@ -96,6 +95,7 @@
                     }
 
                     setTimeout(function(){
+                        apple_num = 0;
                         for(var i = 0;i < apples.children.length;i++){
                             var app = apples.children[i];
                             app.kill();
@@ -105,7 +105,7 @@
             }
 
             //stars
-            if(y < 190){
+            if(y < 125 && star_num < max_stars){
                 star_num += 1;
                 var star = stars.create(x-28, y-28, 'star');
                 star.name = 'star' + star_num;
@@ -115,7 +115,6 @@
                 star_audio.play();
 
                 if(star_num == max_stars){
-                    star_num = 0;
                     for(var i = 0;i < stars.children.length;i++){
                         var sta = stars.children[i];
                         game.physics.arcade.enable(sta);
@@ -126,6 +125,7 @@
                     }
 
                     setTimeout(function(){
+                        star_num = 0;
                         for(var i = 0;i < stars.children.length;i++){
                             var sta = stars.children[i];
                             sta.kill();
