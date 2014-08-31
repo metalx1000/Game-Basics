@@ -14,12 +14,18 @@
         var max_apples = 10;
         var apple_audio;
     
+        var star_num = 0;
+        var max_stars = 5;
+        var star_audio;
+
         var game = new Phaser.Game(width, height, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
         function preload() {
             game.load.image("tree", "res/tree.png");
             game.load.image("apple", "res/apple.png");
+            game.load.image("star", "res/star.png");
 
+            //red Apple Sounds
             game.load.audio('1_red_apples', ['res/audio/apples/01_red_apple.mp3','res/audio/apples/01_red_apple.ogg']);
             game.load.audio('2_red_apples', ['res/audio/apples/02_red_apples.mp3','res/audio/apples/02_red_apples.ogg']);
             game.load.audio('3_red_apples', ['res/audio/apples/03_red_apples.mp3','res/audio/apples/03_red_apples.ogg']);
@@ -30,6 +36,19 @@
             game.load.audio('8_red_apples', ['res/audio/apples/08_red_apples.mp3','res/audio/apples/08_red_apples.ogg']);
             game.load.audio('9_red_apples', ['res/audio/apples/09_red_apples.mp3','res/audio/apples/09_red_apples.ogg']);
             game.load.audio('10_red_apples', ['res/audio/apples/10_red_apples.mp3','res/audio/apples/10_red_apples.ogg']);
+
+            //yellow star sounds
+            game.load.audio('1_yellow_stars', ['res/audio/stars/01_yellow_star.mp3','res/audio/stars/01_yellow_star.ogg']);
+            game.load.audio('2_yellow_stars', ['res/audio/stars/02_yellow_stars.mp3','res/audio/stars/02_yellow_stars.ogg']);
+            game.load.audio('3_yellow_stars', ['res/audio/stars/03_yellow_stars.mp3','res/audio/stars/03_yellow_stars.ogg']);
+            game.load.audio('4_yellow_stars', ['res/audio/stars/04_yellow_stars.mp3','res/audio/stars/04_yellow_stars.ogg']);
+            game.load.audio('5_yellow_stars', ['res/audio/stars/05_yellow_stars.mp3','res/audio/stars/05_yellow_stars.ogg']);
+            game.load.audio('6_yellow_stars', ['res/audio/stars/06_yellow_stars.mp3','res/audio/stars/06_yellow_stars.ogg']);
+            game.load.audio('7_yellow_stars', ['res/audio/stars/07_yellow_stars.mp3','res/audio/stars/07_yellow_stars.ogg']);
+            game.load.audio('8_yellow_stars', ['res/audio/stars/08_yellow_stars.mp3','res/audio/stars/08_yellow_stars.ogg']);
+            game.load.audio('9_yellow_stars', ['res/audio/stars/09_yellow_stars.mp3','res/audio/stars/09_yellow_stars.ogg']);
+            game.load.audio('10_yellow_stars', ['res/audio/stars/10_yellow_stars.mp3','res/audio/stars/10_yellow_stars.ogg']);
+
         }
 
         function create() {
@@ -39,6 +58,8 @@
             tree.position.y = height - tree.height;
 
             apples = game.add.group();
+            stars = game.add.group();
+
             //game.physics.startSystem(Phaser.Physics.ARCADE);
             game.input.onDown.add(click, this);
         }
@@ -52,6 +73,7 @@
             var x = game.input.x;
             var y = game.input.y;
 
+            //apples
             if(x > 50 && x < 450 && y > 190 && y < 450){
                 apple_num += 1;
                 //var apple = game.add.sprite(x-28, y-28, 'apple');
@@ -62,9 +84,8 @@
                 apple_audio = game.add.audio(apple_num + '_red_apples');
                 apple_audio.play();
 
-                if(apple_num == 10){
+                if(apple_num == max_apples){
                     apple_num = 0;
-                    console.log("10 apples");
                     for(var i = 0;i < apples.children.length;i++){
                         var app = apples.children[i];
                         game.physics.arcade.enable(app);
@@ -82,6 +103,37 @@
                     },5000);
                 }
             }
+
+            //stars
+            if(y < 190){
+                star_num += 1;
+                var star = stars.create(x-28, y-28, 'star');
+                star.name = 'star' + star_num;
+                star.scale.setTo(.4,.4);
+
+                star_audio = game.add.audio(star_num + '_yellow_stars');
+                star_audio.play();
+
+                if(star_num == max_stars){
+                    star_num = 0;
+                    for(var i = 0;i < stars.children.length;i++){
+                        var sta = stars.children[i];
+                        game.physics.arcade.enable(sta);
+                        sta.body.gravity.set(0, 180);
+                        sta.body.bounce.set(0.8);
+                        sta.enableBody = true;
+                        sta.body.collideWorldBounds = true;
+                    }
+
+                    setTimeout(function(){
+                        for(var i = 0;i < stars.children.length;i++){
+                            var sta = stars.children[i];
+                            sta.kill();
+                        }
+                    },5000);
+                }
+            }
+
             //Set the game to strech and fill the screen
             //game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
             game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
