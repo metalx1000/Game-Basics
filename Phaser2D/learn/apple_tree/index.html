@@ -13,7 +13,9 @@
         var apple_num = 0;
         var max_apples = 10;
         var apple_audio;
-    
+        
+        var sounds = [];
+
         var star_num = 0;
         var max_stars = 5;
         var star_audio;
@@ -58,6 +60,8 @@
             tree.position.y = height - tree.height;
 
             apples = game.add.group();
+            apples_audio = game.add.group();
+
             stars = game.add.group();
 
             //game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -81,7 +85,11 @@
                 apple.name = 'apple' + apple_num;
                 apple.scale.setTo(.4,.4);
 
+                for(var i = 0; i < sounds.length;i++){
+                    sounds[i].stop();
+                }
                 apple_audio = game.add.audio(apple_num + '_red_apples');
+                sounds.push(apple_audio);
                 apple_audio.play();
 
                 if(apple_num == max_apples){
@@ -111,7 +119,12 @@
                 star.name = 'star' + star_num;
                 star.scale.setTo(.4,.4);
 
+                for(var i = 0; i < sounds.length;i++){
+                    sounds[i].stop();
+                }
+
                 star_audio = game.add.audio(star_num + '_yellow_stars');
+                sounds.push(star_audio);
                 star_audio.play();
 
                 if(star_num == max_stars){
