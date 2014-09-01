@@ -1,0 +1,36 @@
+            //stars
+            if(y < 125 && star_num < max_stars){
+                star_num += 1;
+                var star = stars.create(x-28, y-28, 'star');
+                star.name = 'star' + star_num;
+                star.scale.setTo(.4,.4);
+
+                for(var i = 0; i < sounds.length;i++){
+                    sounds[i].stop();
+                }
+
+                star_audio = game.add.audio(star_num + '_yellow_stars');
+                sounds.push(star_audio);
+                star_audio.play();
+
+                if(star_num == max_stars){
+                    for(var i = 0;i < stars.children.length;i++){
+                        var sta = stars.children[i];
+                        game.physics.arcade.enable(sta);
+                        sta.body.gravity.set(0, 180);
+                        sta.body.bounce.set(0.8);
+                        sta.enableBody = true;
+                        sta.body.collideWorldBounds = true;
+                    }
+
+                    setTimeout(function(){
+                        star_num = 0;
+                        for(var i = 0;i < stars.children.length;i++){
+                            var sta = stars.children[i];
+                            sta.kill();
+                        }
+                    },5000);
+                }
+            }
+
+

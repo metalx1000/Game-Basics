@@ -20,12 +20,17 @@
         var max_stars = 5;
         var star_audio;
 
+        var bbird_num = 0;
+        var max_bbirds = 1;
+        var bbird_audio;
+
         var game = new Phaser.Game(width, height, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
         function preload() {
             game.load.image("tree", "res/tree.png");
             game.load.image("apple", "res/apple.png");
             game.load.image("star", "res/star.png");
+            game.load.image("bbird", "res/blue_bird.png");
 
             //red Apple Sounds
             game.load.audio('1_red_apples', ['res/audio/apples/01_red_apple.mp3','res/audio/apples/01_red_apple.ogg']);
@@ -51,6 +56,8 @@
             game.load.audio('9_yellow_stars', ['res/audio/stars/09_yellow_stars.mp3','res/audio/stars/09_yellow_stars.ogg']);
             game.load.audio('10_yellow_stars', ['res/audio/stars/10_yellow_stars.mp3','res/audio/stars/10_yellow_stars.ogg']);
 
+            game.load.audio('blue_bird', ['res/audio/bbird.mp3','res/audio/bbird.ogg']);
+
         }
 
         function create() {
@@ -63,6 +70,7 @@
             apples_audio = game.add.group();
 
             stars = game.add.group();
+            bbirds = game.add.group();
 
             //game.physics.startSystem(Phaser.Physics.ARCADE);
             game.input.onDown.add(click, this);
@@ -73,7 +81,7 @@
         }
 
         function click(){
-            //console.log(game.input.x + ":" + game.input.y);
+            console.log(game.input.x + ":" + game.input.y);
             var x = game.input.x;
             var y = game.input.y;
 
@@ -146,6 +154,26 @@
                     },5000);
                 }
             }
+
+            //blue birds
+            if(x > 350 && y > 475 && y < 600 && bbird_num < max_bbirds){
+                bbird_num += 1;
+                var bbird = bbirds.create(x-28, y-28, 'bbird');
+                bbird.name = 'bbird' + bbird_num;
+                bbird.scale.setTo(.4,.4);
+
+                for(var i = 0; i < sounds.length;i++){
+                    sounds[i].stop();
+                }
+
+                bbird_audio = game.add.audio('blue_bird');
+                sounds.push(bbird_audio);
+                bbird_audio.play();
+
+            }
+
+
+
 
             //Set the game to strech and fill the screen
             //game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
