@@ -20,9 +20,8 @@
         var max_stars = 5;
         var star_audio;
 
-        var bbird_num = 0;
-        var max_bbirds = 1;
-        var bbird_audio;
+        var bbird_max = 800;
+        var bbird;
 
         var game = new Phaser.Game(width, height, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
@@ -70,14 +69,17 @@
             apples_audio = game.add.group();
 
             stars = game.add.group();
-            bbirds = game.add.group();
 
+            bbird = game.add.sprite(1028, 1028, 'bbird');
+            game.physics.arcade.enable(bbird);
             //game.physics.startSystem(Phaser.Physics.ARCADE);
             game.input.onDown.add(click, this);
         }
 
         function update(){
-
+            if(bbird.x < bbird_max){
+                bbird.body.velocity.x = 100;
+            }    
         }
 
         function click(){
@@ -156,10 +158,9 @@
             }
 
             //blue birds
-            if(x > 350 && y > 475 && y < 600 && bbird_num < max_bbirds){
-                bbird_num += 1;
-                var bbird = bbirds.create(x-28, y-28, 'bbird');
-                bbird.name = 'bbird' + bbird_num;
+            if(x > 300 && y > 450 && y < 625 && bbird.x >= bbird_max){
+                bbird.x = x-28;
+                bbird.y = y-28;
                 bbird.scale.setTo(.4,.4);
 
                 for(var i = 0; i < sounds.length;i++){
