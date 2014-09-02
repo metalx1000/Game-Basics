@@ -20,8 +20,11 @@
         var max_stars = 5;
         var star_audio;
 
-        var bbird_max = 800;
+        var bbird_max = width + 150;
         var bbird;
+
+        var parrot_max = -150;
+        var parrot;
 
         var game = new Phaser.Game(width, height, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
@@ -30,6 +33,7 @@
             game.load.image("apple", "res/apple.png");
             game.load.image("star", "res/star.png");
             game.load.image("bbird", "res/blue_bird.png");
+            game.load.image("parrot", "res/green_parrot.png");
 
             //red Apple Sounds
             game.load.audio('1_red_apples', ['res/audio/apples/01_red_apple.mp3','res/audio/apples/01_red_apple.ogg']);
@@ -56,6 +60,7 @@
             game.load.audio('10_yellow_stars', ['res/audio/stars/10_yellow_stars.mp3','res/audio/stars/10_yellow_stars.ogg']);
 
             game.load.audio('blue_bird', ['res/audio/bbird.mp3','res/audio/bbird.ogg']);
+            game.load.audio('parrot', ['res/audio/parrot.mp3','res/audio/parrot.ogg']);
 
         }
 
@@ -72,6 +77,9 @@
 
             bbird = game.add.sprite(1028, 1028, 'bbird');
             game.physics.arcade.enable(bbird);
+
+            parrot = game.add.sprite(-1028, -1028, 'parrot');
+            game.physics.arcade.enable(parrot);
             //game.physics.startSystem(Phaser.Physics.ARCADE);
             game.input.onDown.add(click, this);
         }
@@ -79,6 +87,10 @@
         function update(){
             if(bbird.x < bbird_max){
                 bbird.body.velocity.x = 100;
+            }    
+
+            if(parrot.x > parrot_max){
+                parrot.body.velocity.x = -100;
             }    
         }
 
@@ -170,6 +182,23 @@
                 bbird_audio = game.add.audio('blue_bird');
                 sounds.push(bbird_audio);
                 bbird_audio.play();
+
+            }
+
+
+            //green parrot
+            if(x < 200 && y > 450 && y < 625 && parrot.x <= parrot_max){
+                parrot.x = x-28;
+                parrot.y = y-28;
+                parrot.scale.setTo(.4,.4);
+
+                for(var i = 0; i < sounds.length;i++){
+                    sounds[i].stop();
+                }
+
+                parrot_audio = game.add.audio('parrot');
+                sounds.push(parrot_audio);
+                parrot_audio.play();
 
             }
 
